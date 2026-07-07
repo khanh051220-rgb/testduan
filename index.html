@@ -6,6 +6,11 @@
     <title>Giao Diện Học Tập cùng Khánh</title>
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/188/188333.png">
     <style>
+        /* --- KHUNG ẢNH ĐA NĂNG --- */
+        .khung-anh-minh-hoa { text-align: center; margin: 15px auto; max-width: 100%; width: fit-content; }
+        .khung-anh-minh-hoa img { max-width: 100%; height: auto; border-radius: 12px; border: 2px solid #b7e4c7; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .khung-anh-minh-hoa .chu-thich-anh { font-size: 13px; color: #555; font-style: italic; margin-top: 5px; }
+        
         /* --- BỘ MÀU SẮC CHỦ ĐẠO --- */
         :root {
             --primary: #1b4332;
@@ -15,97 +20,57 @@
             --accent: #ff9f1c;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; }
+        * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease; }
 
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            padding: 20px; 
-            background: var(--bg-gradient); 
-            min-height: 100vh;
-            margin: 0; display: flex; flex-direction: column; align-items: center;
+            padding: 20px; background: var(--bg-gradient); 
+            min-height: 100vh; margin: 0; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- VÙNG HIỂN THỊ CHÍNH --- */
         .container { 
-            width: 95%; max-width: 1000px; 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 40px; border-radius: 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); margin-top: 20px;
+            width: 95%; max-width: 1000px; background: rgba(255, 255, 255, 0.95); 
+            padding: 40px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); margin-top: 40px;
         }
 
-        h1 { text-align: center; color: var(--primary); font-size: 32px; margin-bottom: 10px; }
+        h1 { text-align: center; color: var(--primary); font-size: 32px; margin-bottom: 10px; letter-spacing: 1px; }
         .sub-title { text-align: center; color: var(--secondary); font-size: 16px; margin-bottom: 30px; font-style: italic; }
 
-        /* --- TABS KHỐI LỚP --- */
         .tabs-khoi { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
         .btn-tab { 
-            padding: 15px 35px; cursor: pointer; 
-            background: linear-gradient(45deg, #2d6a4f, #52b788); 
-            color: white; border: none; border-radius: 50px; 
-            font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            padding: 15px 35px; cursor: pointer; background: linear-gradient(45deg, #2d6a4f, #52b788); 
+            color: white; border: none; border-radius: 50px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         .btn-tab:active { transform: scale(0.95); }
-        .btn-tab.active-tab { 
-            background: linear-gradient(45deg, #ff9f1c, #f77f00); 
-            box-shadow: 0 5px 15px rgba(247,127,0,0.4); 
-        }
+        .btn-tab.active-tab { background: linear-gradient(45deg, #ff9f1c, #f77f00); box-shadow: 0 5px 15px rgba(247,127,0,0.4); }
 
-        /* --- LƯỚI MÔN HỌC --- */
         .vung-mon-hoc {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px; padding: 20px; background: #f7fdf9; 
-            border-radius: 20px; border: 1px dashed var(--secondary);
+            gap: 15px; margin-top: 20px; padding: 20px; background: #f7fdf9; border-radius: 20px; border: 1px dashed var(--secondary);
         }
         .btn-mon {
-            padding: 15px; cursor: pointer; background: white;
-            color: var(--primary); border: 2px solid #b7e4c7;
-            border-radius: 15px; font-weight: bold; font-size: 15px;
-            text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            padding: 15px; cursor: pointer; background: white; color: var(--primary); border: 2px solid #b7e4c7;
+            border-radius: 15px; font-weight: bold; font-size: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .btn-mon:hover { background: var(--light); border-color: var(--secondary); transform: translateY(-2px); }
+        .btn-mon:active { transform: translateY(0); }
 
-        /* --- POPUP CHUNG VÀ CÁC THÀNH PHẦN BÊN TRONG --- */
-        .popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.6); display: none; 
-            justify-content: center; align-items: center; z-index: 9999;
-            backdrop-filter: blur(3px);
-        }
-        .popup-box {
-            background: white; width: 90%; max-width: 950px; height: 85vh;
-            border-radius: 25px; border: 3px solid var(--secondary); padding: 30px; 
-            display: flex; flex-direction: column; position: relative; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        }
-        .btn-close {
-            position: absolute; top: 15px; right: 15px; background: #ff4d4d; 
-            color: white; border: none; border-radius: 50%; width: 35px; height: 35px; 
-            cursor: pointer; font-weight: bold; font-size: 16px; z-index: 10;
-        }
-        .btn-close:hover { background: #ff1a1a; transform: scale(1.1); }
-        
-        #popup-noidung { flex: 1; overflow-y: auto; padding-right: 15px; margin-top: 10px; }
-        #popup-noidung::-webkit-scrollbar { width: 8px; }
-        #popup-noidung::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
-
-        /* --- CẤU TRÚC BÀI HỌC BÊN TRONG --- */
-        .tieude-chuong { color: #ff9f1c; background: #fff5e6; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; text-transform: uppercase;}
-        .khoi-bai-hoc { margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        /* --- CSS GIỮ NGUYÊN BÊN TRONG BÀI HỌC --- */
+        .khoi-bai-hoc { margin-bottom: 30px; margin-left: 10px; border-bottom: 2px dashed #ddd; padding-bottom: 20px;}
         .khoi-bai-hoc:last-child { border-bottom: none; }
-        .khoi-bai-hoc h4 { color: #2d6a4f; font-size: 20px; margin-bottom: 15px; }
+        .khoi-bai-hoc h4 { color: #2d6a4f; font-size: 18px; margin-bottom: 10px; }
+        .hop-cong-thuc { background: #e8f5e9; padding: 15px; border-left: 5px solid #40916c; border-radius: 8px; margin: 15px 0; }
+        .hop-loi-giai { background: #f8f9fa; padding: 12px; border-radius: 8px; font-style: italic; color: #555; }
         
-        .dong-khai-niem { font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 15px; }
-        .hop-meo-nho { background: #e8f5e9; padding: 15px; border-left: 5px solid #40916c; border-radius: 8px; margin: 15px 0; font-size: 15.5px;}
+        /* Chỗ này nút video nằm bên phải ở dưới cùng (như code cũ) */
+        .khung-link-video { margin-top: 20px; text-align: right; }
+        .btn-video { display: inline-block; background: #e63946; color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .btn-video:hover { opacity: 0.9; }
         
-        details { background: #f4fbfa; border: 1px solid #c9ede2; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
-        summary { padding: 12px 15px; font-weight: bold; color: #20604b; cursor: pointer; background: #e6f7f2; user-select: none; }
-        summary:hover { background: #d3f0e8; }
-        .vung-vi-du { padding: 15px; border-bottom: 1px dashed #b7e4c7; }
-        .hop-loi-giai { background: #fff; padding: 15px; border-radius: 8px; font-style: italic; color: #444; margin-top: 10px; border-left: 3px solid #ff9f1c;}
-        
-        .vung-tai-nguyen { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .btn-video { background: #e63946; color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 13px; }
-        .btn-link { background: #fff3cd; color: #856404; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #ffe8a1;}
+        /* Chỗ này link tài liệu nằm dưới cùng */
+        .hop-lien-ket-mo-rong { background: #fff3cd; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 14px; color: #856404; border: 1px dashed #ffe8a1;}
+        .hop-lien-ket-mo-rong a { color: #0056b3; font-weight: bold; text-decoration: none; }
+        .hop-lien-ket-mo-rong a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -166,19 +131,20 @@
         </div>
     </div>
 
-    <div id="popup-chung" class="popup-overlay">
-        <div class="popup-box">
-            <button class="btn-close" onclick="dongPopup()">✖</button>
+    <div id="popup-chung" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 9999;">
+        <div style="background: white; width: 85%; max-width: 900px; height: 80vh; border-radius: 25px; border: 3px solid #40916c; padding: 30px; display: flex; flex-direction: column; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.2);">
+            <button onclick="dongPopup()" style="position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: bold; font-size: 16px;">✖</button>
             <h2 id="popup-tieude" style="color: #1b4332; margin-top: 0; text-align: center; border-bottom: 2px dashed #40916c; padding-bottom: 15px;">
                 </h2>
-            <div id="popup-noidung">
+            
+            <div id="popup-noidung" style="flex: 1; overflow-y: auto; padding-right: 15px; margin-top: 10px;">
                 </div>
         </div>
     </div>
 
 <script>
     /* =========================================================
-       KHO DỮ LIỆU TẬP TRUNG (ƯU TIÊN TOÁN 10, 11, 12)
+       KHO DỮ LIỆU TẬP TRUNG - CẤU TRÚC MỚI (1 bài có nhiều phần nhỏ)
        ========================================================= */
     const khoDuLieuHocTap = {
         lop10: {
@@ -190,28 +156,67 @@
                         baiList: [
                             {
                                 tenBai: "Bài 1. Mệnh đề",
-                                dinhNghia: "Mệnh đề toán học là một câu khẳng định có tính đúng hoặc sai rõ ràng. Một mệnh đề không thể vừa đúng vừa sai (không có chuyện 'mập mờ' nửa nọ nửa kia đâu nha).",
-                                meoNho: "Những câu nghi vấn (hỏi chấm), câu cảm thán (khen/chê), hay câu cầu khiến (ra lệnh) đều bị loại từ vòng gửi xe, KHÔNG phải mệnh đề vì chẳng ai biết đường nào mà phán đúng hay sai.",
-                                deBaiViDu: `Trong các câu sau, câu nào là mệnh đề? Nếu là mệnh đề thì thuộc loại nào?<br>
-                                            1. "Hà Nội là thủ đô của Việt Nam."<br>
-                                            2. "Số pi là một số hữu tỉ."<br>
-                                            3. "Học bài đi ní!"`,
-                                loiGiaiViDu: `<b>Câu 1:</b> Là mệnh đề đúng (mệnh đề xã hội).<br>
-                                              <b>Câu 2:</b> Là mệnh đề toán học (sai vì pi là số vô tỉ, nhưng vẫn xác định được tính đúng/sai).<br>
-                                              <b>Câu 3:</b> Không phải mệnh đề (câu ra lệnh).`,
-                                linkVideo: "https://youtu.be/edVegk01ZsA",
-                                linkTaiLieu: "https://vietjack.com/toan-lop-10/bai-tap-ve-menh-de.jsp"
+                                // Đây là Mảng chứa các phần kiến thức nhỏ trong Bài 1
+                                danhSachPhan: [
+                                    {
+                                        dinhNghia: "Mệnh đề",
+                                        noiDungKhaiNiem: "Mệnh đề toán học là một câu khẳng định có tính đúng hoặc sai rõ ràng. Một mệnh đề không thể vừa đúng vừa sai.",
+                                        meoNho: "Những câu nghi vấn (hỏi), cảm thán (khen/chê), cầu khiến (ra lệnh) KHÔNG phải mệnh đề vì không xác định được tính đúng sai.",
+                                        deBaiViDu: "Trong các câu sau, câu nào là mệnh đề? Nếu là mệnh đề thì thuộc loại nào?<br>1. 'Hà Nội là thủ đô của Việt Nam.'<br>2. 'Số pi là một số hữu tỉ.'<br>3. 'Học bài đi ní!'",
+                                        loiGiaiViDu: "Câu 1: Là mệnh đề đúng (mệnh đề xã hội).<br>Câu 2: Là mệnh đề toán học (mệnh đề sai).<br>Câu 3: Không phải mệnh đề (câu ra lệnh)."
+                                    },
+                                    {
+                                        dinhNghia: "Mệnh đề chứa biến",
+                                        noiDungKhaiNiem: "Là loại mệnh đề chưa thể khẳng định đúng/sai ngay lập tức. Cần thế một giá trị cụ thể của biến (x, y, n...) vào mới xác định được. Kí hiệu: P(n) hoặc P(x).",
+                                        meoNho: "Cứ thấy câu nào chứa biến số, chưa biết Đúng hay Sai ngay lúc đó, nhưng thế số vào là rõ trắng đen thì chính là nó!",
+                                        deBaiViDu: "Xét xem câu '5n chia hết cho 2' có phải mệnh đề chứa biến không? Tính đúng sai khi n = 4 và n = 5.",
+                                        loiGiaiViDu: "Đây là mệnh đề chứa biến n.<br>- Khi n = 4: '20 chia hết cho 2' 👉 Mệnh đề Đúng.<br>- Khi n = 5: '25 chia hết cho 2' 👉 Mệnh đề Sai."
+                                    },
+                                    {
+                                        dinhNghia: "Mệnh đề phủ định",
+                                        noiDungKhaiNiem: "Phủ định của mệnh đề P là mệnh đề P̅. Nếu P đúng thì P̅ sai, và ngược lại.",
+                                        meoNho: "Tuyệt chiêu lật kèo: Thêm hoặc bớt cụm từ 'không', 'không phải' vào trước vị ngữ của mệnh đề gốc.",
+                                        deBaiViDu: "Tìm mệnh đề phủ định của 'P: 5 chia hết cho 3' và xét tính đúng sai.",
+                                        loiGiaiViDu: "Mệnh đề phủ định là 'P̅: 5 không chia hết cho 3'. Vì mệnh đề P sai nên P̅ là mệnh đề đúng."
+                                    },
+                                    {
+                                        dinhNghia: "Mệnh đề kéo theo",
+                                        noiDungKhaiNiem: "Mệnh đề 'Nếu P thì Q' được gọi là mệnh đề kéo theo, kí hiệu là P ⇒ Q.",
+                                        meoNho: "Cảnh báo bùng kèo: Mệnh đề P ⇒ Q chỉ sai khi P đúng mà Q lại sai. Nếu P sai từ đầu thì mệnh đề mặc định đúng."
+                                    },
+                                    {
+                                        dinhNghia: "Mệnh đề đảo",
+                                        noiDungKhaiNiem: "Đổi vị trí hai vế thành Q ⇒ P ('Nếu Q thì P'). Lưu ý: Mệnh đề gốc đúng chưa chắc mệnh đề đảo đã đúng!",
+                                        deBaiViDu: "Cho P: 'n = 0'; Q: 'n là số nguyên'. Phát biểu mệnh đề kéo theo, mệnh đề đảo và xét tính sai.",
+                                        loiGiaiViDu: "- Kéo theo P ⇒ Q: 'Nếu n = 0 thì n là số nguyên' 👉 Đúng.<br>- Đảo Q ⇒ P: 'Nếu n là số nguyên thì n = 0' 👉 Sai (vì n có thể bằng 1, 2...)."
+                                    },
+                                    {
+                                        dinhNghia: "Mệnh đề tương đương",
+                                        noiDungKhaiNiem: "Mệnh đề 'P nếu và chỉ nếu Q' gọi là mệnh đề tương đương, kí hiệu là P ⇔ Q.",
+                                        meoNho: "Điều kiện thành đôi: Chiều đi P ⇒ Q và chiều về Q ⇒ P đều phải đúng thì mệnh đề tương đương mới đúng."
+                                    },
+                                    {
+                                        dinhNghia: "Mệnh đề có chứa ký hiệu ∀ và ∃",
+                                        noiDungKhaiNiem: "∀: Đọc là 'Với mọi' (tất tần tật).<br>∃: Đọc là 'Tồn tại' hoặc 'Có ít nhất một'.",
+                                        meoNho: "Tuyệt chiêu phủ định: Khi muốn phủ định, đổi ∀ thành ∃ (hoặc ngược lại) và phủ định luôn tính chất phía sau.",
+                                        deBaiViDu: "Tìm mệnh đề phủ định của: '∃x ∈ ℝ, x² + 1 = 0'",
+                                        loiGiaiViDu: "Áp dụng tuyệt chiêu, biến ∃ thành ∀ và đổi = thành ≠. Phủ định: '∀x ∈ ℝ, x² + 1 ≠ 0'"
+                                    }
+                                ],
+                                // Hai thuộc tính này sẽ luôn nằm ở dưới cùng của Bài 1
+                                linkVideo: "https://youtu.be/edVegk01ZsA?si=MA_Iyt_o2TWmyLR2",
+                                linkTaiLieuHTML: `<a href="https://vietjack.com/toan-lop-10/bai-tap-ve-menh-de.jsp" target="_blank">📄 Bài Tập Tự Luyện</a> | <a href="https://img.loigiaihay.com/picture/2021/0927/menh-de.png" target="_blank">🌐 Đọc Lý Thuyết Chuyên Sâu</a>`
                             },
                             {
-                                tenBai: "Bài 2. Mệnh đề chứa biến",
-                                dinhNghia: "Mệnh đề chứa biến là loại mệnh đề 'tùy cơ ứng biến', chưa thể khẳng định được đúng hay sai ngay lập tức. Cần phải có một giá trị cụ thể thế vào chỗ của biến (x, y, n...) thì mới biết được. Kí hiệu P(n) hoặc P(x, y).",
-                                meoNho: "Cứ thấy câu nào chứa x, y, n đọc lên thấy vô tri chưa biết Đúng hay Sai, nhưng chỉ cần 'chốt hạ' thế số vào là rõ trắng đen liền — thì chính nó chứ ai!",
-                                deBaiViDu: "Xét xem câu '5n chia hết cho 2' có phải mệnh đề chứa biến không? Tính đúng sai khi n = 4 và n = 5.",
-                                loiGiaiViDu: `Đây chính là mệnh đề chứa biến.<br>
-                                              - <b>Khi n = 4:</b> Ta được câu "20 chia hết cho 2" 👉 Mệnh đề đúng.<br>
-                                              - <b>Khi n = 5:</b> Ta được câu "25 chia hết cho 2" 👉 Mệnh đề sai.`,
+                                tenBai: "Bài 2. Tập hợp",
+                                danhSachPhan: [
+                                    {
+                                        dinhNghia: "Tập hợp",
+                                        noiDungKhaiNiem: "Tập hợp là khái niệm cơ bản của toán học, không định nghĩa.",
+                                    }
+                                ],
                                 linkVideo: "",
-                                linkTaiLieu: ""
+                                linkTaiLieuHTML: ""
                             }
                         ]
                     }
@@ -219,46 +224,10 @@
             }
         },
         lop11: {
-            toan: {
-                tenMon: "📐 TOÁN HỌC – KHỐI LỚP 11",
-                chuongList: [
-                    {
-                        tenChuong: "CHƯƠNG I. HÀM SỐ LƯỢNG GIÁC",
-                        baiList: [
-                            {
-                                tenBai: "Bài 1. [Tên bài học]",
-                                dinhNghia: "[Khánh tự điền định nghĩa nhé]",
-                                meoNho: "[Khánh tự điền mẹo nhớ nhé]",
-                                deBaiViDu: "[Khánh tự điền đề bài ví dụ]",
-                                loiGiaiViDu: "[Khánh tự điền lời giải]",
-                                linkVideo: "",
-                                linkTaiLieu: ""
-                            }
-                        ]
-                    }
-                ]
-            }
+            toan: { tenMon: "📐 TOÁN HỌC – KHỐI LỚP 11", chuongList: [] }
         },
         lop12: {
-            toan: {
-                tenMon: "📐 TOÁN HỌC – KHỐI LỚP 12",
-                chuongList: [
-                    {
-                        tenChuong: "CHƯƠNG I. ỨNG DỤNG ĐẠO HÀM",
-                        baiList: [
-                            {
-                                tenBai: "Bài 1. Sự đồng biến, nghịch biến của hàm số",
-                                dinhNghia: "[Khánh tự điền định nghĩa nhé]",
-                                meoNho: "[Khánh tự điền mẹo nhớ nhé]",
-                                deBaiViDu: "[Khánh tự điền đề bài ví dụ]",
-                                loiGiaiViDu: "[Khánh tự điền lời giải]",
-                                linkVideo: "",
-                                linkTaiLieu: ""
-                            }
-                        ]
-                    }
-                ]
-            }
+            toan: { tenMon: "📐 TOÁN HỌC – KHỐI LỚP 12", chuongList: [] }
         }
     };
 
@@ -275,42 +244,59 @@
     }
 
     function hienThiKhungPoup(maMon, maLop) {
-        // Kiểm tra xem dữ liệu của môn này đã được Khánh soạn trong khoDuLieuHocTap chưa
-        if (!khoDuLieuHocTap[maLop] || !khoDuLieuHocTap[maLop][maMon]) {
+        if (!khoDuLieuHocTap[maLop] || !khoDuLieuHocTap[maLop][maMon] || khoDuLieuHocTap[maLop][maMon].chuongList.length === 0) {
             alert("Đang soạn thảo môn học này, cậu quay lại sau nhé! 🛠️");
             return;
         }
 
         const duLieuMon = khoDuLieuHocTap[maLop][maMon];
-        
         document.getElementById('popup-tieude').innerHTML = duLieuMon.tenMon;
 
         let htmlNoiDung = '';
         duLieuMon.chuongList.forEach(chuong => {
-            htmlNoiDung += `<h3 class="tieude-chuong">${chuong.tenChuong}</h3>`;
+            htmlNoiDung += `<h3 style="color: #ff9f1c; background: #f7fdf9; padding: 10px; border-radius: 10px;">${chuong.tenChuong}</h3>`;
             
+            // Duyệt qua từng bài (Ví dụ: Bài 1, Bài 2)
             chuong.baiList.forEach(bai => {
-                htmlNoiDung += `
-                    <div class="khoi-bai-hoc">
-                        <h4>${bai.tenBai}</h4>
-                        <div class="dong-khai-niem">📌 <b>Khái niệm:</b> ${bai.dinhNghia}</div>
+                htmlNoiDung += `<div class="khoi-bai-hoc">`;
+                htmlNoiDung += `<h4>${bai.tenBai}</h4>`;
+                
+                // Duyệt qua từng PHẦN NHỎ trong Bài đó (Khái niệm 1, Khái niệm 2...)
+                if (bai.danhSachPhan) {
+                    bai.danhSachPhan.forEach(phan => {
+                        htmlNoiDung += `<p>📌 <b>Khái niệm ${phan.dinhNghia}:</b> ${phan.noiDungKhaiNiem}</p>`;
                         
-                        <div class="hop-meo-nho">
-                            💡 <b>Mẹo hệ thống:</b> ${bai.meoNho}
+                        if (phan.meoNho) {
+                            htmlNoiDung += `<div class="hop-cong-thuc">💡 <b>Mẹo/Chú ý:</b> ${phan.meoNho}</div>`;
+                        }
+                        if (phan.deBaiViDu) {
+                            htmlNoiDung += `<p>📝 <b>Ví dụ mẫu:</b> ${phan.deBaiViDu}</p>`;
+                        }
+                        if (phan.loiGiaiViDu) {
+                            htmlNoiDung += `<div class="hop-loi-giai">👉 <b>Lời giải:</b> ${phan.loiGiaiViDu}</div>`;
+                        }
+                        htmlNoiDung += `<br>`; // Tạo chút khoảng trống giữa các phần nhỏ
+                    });
+                }
+                
+                // --- ĐẶT NÚT VIDEO VÀ TÀI LIỆU Ở CUỐI CÙNG CỦA BÀI HỌC ---
+                if (bai.linkVideo) {
+                    htmlNoiDung += `
+                        <div class="khung-link-video">
+                            <a href="${bai.linkVideo}" target="_blank" class="btn-video">📺 Xem Video Bài Giảng</a>
                         </div>
+                    `;
+                }
 
-                        <details>
-                            <summary>▶ 📝 Xem Ví dụ mẫu & Lời giải</summary>
-                            <div class="vung-vi-du"><b>Đề bài:</b><br>${bai.deBaiViDu}</div>
-                            <div class="hop-loi-giai">👉 <b>Lời giải:</b><br>${bai.loiGiaiViDu}</div>
-                        </details>
-                        
-                        <div class="vung-tai-nguyen">
-                            ${bai.linkVideo ? `<a href="${bai.linkVideo}" target="_blank" class="btn-video">📺 Video Bài Giảng</a>` : ''}
-                            ${bai.linkTaiLieu ? `<a href="${bai.linkTaiLieu}" target="_blank" class="btn-link">📄 Tải Tài Liệu</a>` : ''}
+                if (bai.linkTaiLieuHTML) {
+                    htmlNoiDung += `
+                        <div class="hop-lien-ket-mo-rong">
+                            🔗 <b>Tài liệu bổ trợ:</b> ${bai.linkTaiLieuHTML}
                         </div>
-                    </div>
-                `;
+                    `;
+                }
+                
+                htmlNoiDung += `</div>`; // Đóng khoi-bai-hoc
             });
         });
 
