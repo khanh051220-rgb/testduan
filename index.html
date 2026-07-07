@@ -97,7 +97,6 @@
         .dong-khai-niem { font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 15px; }
         .hop-meo-nho { background: #e8f5e9; padding: 15px; border-left: 5px solid #40916c; border-radius: 8px; margin: 15px 0; font-size: 15.5px;}
         
-        /* Cải tiến Accordion cho Ví dụ & Lời giải (Giống ảnh 2) */
         details { background: #f4fbfa; border: 1px solid #c9ede2; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
         summary { padding: 12px 15px; font-weight: bold; color: #20604b; cursor: pointer; background: #e6f7f2; user-select: none; }
         summary:hover { background: #d3f0e8; }
@@ -125,21 +124,44 @@
             <div class="vung-mon-hoc">
                 <div class="btn-mon" onclick="hienThiKhungPoup('toan', 'lop10')">📐 Toán Lớp 10</div>
                 <div class="btn-mon" onclick="hienThiKhungPoup('van', 'lop10')">📚 Ngữ Văn 10</div>
-                <div class="btn-mon">🇬🇧 Tiếng Anh 10</div>
-                <div class="btn-mon">⚡ Vật Lý 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('anh', 'lop10')">🇬🇧 Tiếng Anh 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('su', 'lop10')">⏳ Lịch Sử 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('dia', 'lop10')">🗺️ Địa Lý 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('hoa', 'lop10')">🧪 Hóa Học 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('sinh', 'lop10')">🌱 Sinh Học 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('ly', 'lop10')">⚡ Vật Lý 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('tin', 'lop10')">💻 Tin Học 10</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('gdktpl', 'lop10')">⚖️ GDKTPL 10</div>
             </div>
         </div>
 
         <div id="vung-lop11" class="vung-lop-content" style="display: none;">
             <div class="vung-mon-hoc">
                 <div class="btn-mon" onclick="hienThiKhungPoup('toan', 'lop11')">📐 Toán Lớp 11</div>
-                <div class="btn-mon">📚 Ngữ Văn 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('van', 'lop11')">📚 Ngữ Văn 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('anh', 'lop11')">🇬🇧 Tiếng Anh 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('su', 'lop11')">⏳ Lịch Sử 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('dia', 'lop11')">🗺️ Địa Lý 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('hoa', 'lop11')">🧪 Hóa Học 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('sinh', 'lop11')">🌱 Sinh Học 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('ly', 'lop11')">⚡ Vật Lý 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('tin', 'lop11')">💻 Tin Học 11</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('gdktpl', 'lop11')">⚖️ GDKTPL 11</div>
             </div>
         </div>
 
         <div id="vung-lop12" class="vung-lop-content" style="display: none;">
             <div class="vung-mon-hoc">
                 <div class="btn-mon" onclick="hienThiKhungPoup('toan', 'lop12')">📐 Toán Lớp 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('van', 'lop12')">📚 Ngữ Văn 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('anh', 'lop12')">🇬🇧 Tiếng Anh 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('su', 'lop12')">⏳ Lịch Sử 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('dia', 'lop12')">🗺️ Địa Lý 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('hoa', 'lop12')">🧪 Hóa Học 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('sinh', 'lop12')">🌱 Sinh Học 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('ly', 'lop12')">⚡ Vật Lý 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('tin', 'lop12')">💻 Tin Học 12</div>
+                <div class="btn-mon" onclick="hienThiKhungPoup('gdktpl', 'lop12')">⚖️ GDKTPL 12</div>
             </div>
         </div>
     </div>
@@ -149,7 +171,6 @@
             <button class="btn-close" onclick="dongPopup()">✖</button>
             <h2 id="popup-tieude" style="color: #1b4332; margin-top: 0; text-align: center; border-bottom: 2px dashed #40916c; padding-bottom: 15px;">
                 </h2>
-            
             <div id="popup-noidung">
                 </div>
         </div>
@@ -157,7 +178,7 @@
 
 <script>
     /* =========================================================
-       KHO DỮ LIỆU TẬP TRUNG (Khánh chỉ cần thêm/sửa chữ ở đây)
+       KHO DỮ LIỆU TẬP TRUNG (ƯU TIÊN TOÁN 10, 11, 12)
        ========================================================= */
     const khoDuLieuHocTap = {
         lop10: {
@@ -189,25 +210,6 @@
                                 loiGiaiViDu: `Đây chính là mệnh đề chứa biến.<br>
                                               - <b>Khi n = 4:</b> Ta được câu "20 chia hết cho 2" 👉 Mệnh đề đúng.<br>
                                               - <b>Khi n = 5:</b> Ta được câu "25 chia hết cho 2" 👉 Mệnh đề sai.`,
-                                linkVideo: "", // Bỏ trống nếu chưa có video
-                                linkTaiLieu: ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            van: {
-                tenMon: "📚 NGỮ VĂN – KHỐI LỚP 10",
-                chuongList: [
-                    {
-                        tenChuong: "CHUYÊN ĐỀ 1: THƠ ĐƯỜNG LUẬT",
-                        baiList: [
-                            {
-                                tenBai: "Bài 1. Giới thiệu thơ Đường",
-                                dinhNghia: "Thơ Đường luật là thể thơ xuất hiện từ thời nhà Đường (Trung Quốc), có luật lệ nghiêm ngặt về niêm, luật, vần, đối.",
-                                meoNho: "Nhớ công thức: 'Nhất tam ngũ bất luận, nhị tứ lục phân minh' để kiểm tra luật Bằng Trắc.",
-                                deBaiViDu: "Chỉ ra luật Bằng Trắc trong câu đầu bài Cảm Xúc Mùa Thu của Đỗ Phủ.",
-                                loiGiaiViDu: "Câu thơ: 'Ngọc lộ điêu thương phong thụ lâm'. Phân tích các chữ thứ 2, 4, 6...",
                                 linkVideo: "",
                                 linkTaiLieu: ""
                             }
@@ -224,26 +226,46 @@
                         tenChuong: "CHƯƠNG I. HÀM SỐ LƯỢNG GIÁC",
                         baiList: [
                             {
-                                tenBai: "Bài 1. Hàm số Sin và Cos",
-                                dinhNghia: "Hàm số lượng giác là hàm số tuần hoàn...",
-                                meoNho: "Sin đi học, Cos khóc hoài...",
-                                deBaiViDu: "Tìm tập xác định của hàm số y = sin(x)",
-                                loiGiaiViDu: "Tập xác định D = R.",
-                                linkVideo: "", linkTaiLieu: ""
+                                tenBai: "Bài 1. [Tên bài học]",
+                                dinhNghia: "[Khánh tự điền định nghĩa nhé]",
+                                meoNho: "[Khánh tự điền mẹo nhớ nhé]",
+                                deBaiViDu: "[Khánh tự điền đề bài ví dụ]",
+                                loiGiaiViDu: "[Khánh tự điền lời giải]",
+                                linkVideo: "",
+                                linkTaiLieu: ""
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        lop12: {
+            toan: {
+                tenMon: "📐 TOÁN HỌC – KHỐI LỚP 12",
+                chuongList: [
+                    {
+                        tenChuong: "CHƯƠNG I. ỨNG DỤNG ĐẠO HÀM",
+                        baiList: [
+                            {
+                                tenBai: "Bài 1. Sự đồng biến, nghịch biến của hàm số",
+                                dinhNghia: "[Khánh tự điền định nghĩa nhé]",
+                                meoNho: "[Khánh tự điền mẹo nhớ nhé]",
+                                deBaiViDu: "[Khánh tự điền đề bài ví dụ]",
+                                loiGiaiViDu: "[Khánh tự điền lời giải]",
+                                linkVideo: "",
+                                linkTaiLieu: ""
                             }
                         ]
                     }
                 ]
             }
         }
-        // Cậu cứ thêm các lớp và các môn tiếp theo vào đây nhé!
     };
 
     /* =========================================================
        HỆ THỐNG VẬN HÀNH BẰNG JAVASCRIPT
        ========================================================= */
 
-    // 1. Hàm chuyển tab Khối Lớp (Giữ nguyên của cậu)
     function chuyenTabLop(tenLop) {
         document.querySelectorAll('.btn-tab').forEach(btn => btn.classList.remove('active-tab'));
         document.getElementById('tab-' + tenLop).classList.add('active-tab');
@@ -252,9 +274,8 @@
         document.getElementById('vung-' + tenLop).style.display = 'block';
     }
 
-    // 2. Hàm thông minh: Lấy dữ liệu và bơm vào Popup
     function hienThiKhungPoup(maMon, maLop) {
-        // Kiểm tra xem trong kho đã soạn bài cho môn này lớp này chưa
+        // Kiểm tra xem dữ liệu của môn này đã được Khánh soạn trong khoDuLieuHocTap chưa
         if (!khoDuLieuHocTap[maLop] || !khoDuLieuHocTap[maLop][maMon]) {
             alert("Đang soạn thảo môn học này, cậu quay lại sau nhé! 🛠️");
             return;
@@ -262,12 +283,9 @@
 
         const duLieuMon = khoDuLieuHocTap[maLop][maMon];
         
-        // Cập nhật tiêu đề Popup
         document.getElementById('popup-tieude').innerHTML = duLieuMon.tenMon;
 
-        // Bắt đầu xây dựng mã HTML cho phần nội dung
         let htmlNoiDung = '';
-
         duLieuMon.chuongList.forEach(chuong => {
             htmlNoiDung += `<h3 class="tieude-chuong">${chuong.tenChuong}</h3>`;
             
@@ -296,12 +314,10 @@
             });
         });
 
-        // Bơm mã HTML đã tạo vào khung và hiển thị lên
         document.getElementById('popup-noidung').innerHTML = htmlNoiDung;
         document.getElementById('popup-chung').style.display = 'flex';
     }
 
-    // 3. Hàm đóng Popup
     function dongPopup() {
         document.getElementById('popup-chung').style.display = 'none';
     }
