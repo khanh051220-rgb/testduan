@@ -1,4 +1,298 @@
-function updateFreeTimeSummary() {
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống Kê Lịch Tập 20/11 - Đồng Bộ Đám Mây</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe, #74b9ff);
+            margin: 0;
+            padding: 20px;
+            color: #2d3436;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        h1 { text-align: center; color: #6c5ce7; margin-bottom: 5px; font-weight: 600; }
+        p.subtitle { text-align: center; color: #636e72; margin-bottom: 25px; }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab-buttons { display: flex; gap: 10px; }
+        .tab-btn {
+            background-color: #f1f2f6; color: #2d3436; border: 2px solid #dfe6e9;
+            padding: 10px 20px; font-size: 15px; font-weight: 600; border-radius: 10px;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .tab-btn.active { background-color: #6c5ce7; color: white; border-color: #6c5ce7; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+
+        .btn-reset {
+            background-color: #ff7675; color: white; border: none;
+            padding: 10px 18px; font-size: 14px; font-weight: 600; border-radius: 10px;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-reset:hover { background-color: #d63031; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .table-responsive { overflow-x: auto; max-height: 500px; border: 1px solid #dfe6e9; border-radius: 12px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 14px; text-align: center; border-bottom: 1px solid #dfe6e9; }
+        th { background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: white; position: sticky; top: 0; z-index: 1; font-weight: 600; }
+        tbody tr:nth-child(even) { background-color: #f9f9fb; }
+        tbody tr:hover { background-color: #f1f2f6; }
+
+        input.table-input {
+            width: 90%; padding: 8px 12px; border: 1px solid #b2bec3; border-radius: 8px;
+            font-family: 'Poppins', sans-serif; transition: border-color 0.2s;
+        }
+        input.table-input:focus { border-color: #6c5ce7; outline: none; box-shadow: 0 0 5px rgba(108, 92, 231, 0.3); }
+
+        .result-box { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .result-box.perfect { border-left: 6px solid #00b894; }
+        .result-box.warning { border-left: 6px solid #fdcb6e; }
+        .result-box h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .perfect h3 { color: #00b894; }
+        .warning h3 { color: #e1b12c; }
+        
+        .day-group { margin-bottom: 15px; }
+        .day-title { font-weight: 600; color: #2d3436; margin-bottom: 8px; font-size: 16px; border-bottom: 1px solid #dfe6e9; padding-bottom: 5px;}
+        
+        .time-badge {
+            display: inline-block; background: #dfe6e9; padding: 8px 15px;
+            border-radius: 20px; margin: 5px 10px 5px 0; font-weight: 600; color: #2d3436;
+        }
+        .perfect .time-badge { background: #55efc4; color: #006266; }
+        .warning .time-badge { background: #ffeaa7; color: #d35400; }
+        
+        .missing-list { font-size: 13px; color: #636e72; margin-left: 5px; font-weight: normal; }
+        .instruction {
+            background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14.5px;
+            color: #856404; margin-bottom: 15px; border: 1px solid #ffeeba;
+        }
+        .save-status {
+            font-size: 13px; color: #00b894; font-weight: 600; margin-top: 5px; text-align: right; height: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Lịch Tập Văn Nghệ 20/11</h1>
+        <p class="subtitle">Tìm nhanh khung giờ trống cụ thể để tranh thủ tập luyện</p>
+
+        <div class="header-actions">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Thời Gian Bận</button>
+                <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh Chung</button>
+            </div>
+            <button class="btn-reset" onclick="clearAllData()">🗑️ Xóa Tất Cả Dữ Liệu</button>
+        </div>
+
+        <div id="busyTab" class="tab-content active">
+            <div class="instruction">
+                <b>💡 Hướng dẫn nhập giờ lẻ phút:</b><br>
+                Cú pháp: <b>[Thứ] [giờ bắt đầu]-[giờ kết thúc]</b>.<br>
+                Hỗ trợ các kiểu gõ: <b>10h30</b>, <b>10:30</b>, <b>10h30p</b>, <b>8h-10h30</b>...<br>
+                <i>Ví dụ:</i> <span style="font-weight:bold;">T2 8h30-10h30, T3 14:15-16:45, CN 18-20</span>
+            </div>
+            <div class="save-status" id="saveStatus">Đang tải dữ liệu từ máy chủ...</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Họ và Tên</th>
+                            <th>Thời Gian Bận (Lưu tự động)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="busyTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="freeTab" class="tab-content">
+            <div id="freeSummaryContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Đường link API Firebase chính xác
+        const FIREBASE_URL = "https://lichtap2011-default-rtdb.firebaseio.com/lich_tap.json";
+
+        const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        const START_HOUR = 6;  
+        const END_HOUR = 23;   
+        const TIME_STEP = 15;  
+
+        let membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
+        let saveTimeout; 
+
+        const busyTableBody = document.getElementById('busyTableBody');
+        const freeSummaryContent = document.getElementById('freeSummaryContent');
+        const saveStatus = document.getElementById('saveStatus');
+
+        async function loadFromCloud() {
+            try {
+                const response = await fetch(FIREBASE_URL);
+                const data = await response.json();
+                
+                if (data && Array.isArray(data)) {
+                    membersData = data;
+                }
+                
+                renderBusyTable();
+                updateFreeTimeSummary();
+                saveStatus.style.color = "#00b894";
+                saveStatus.innerText = "✓ Tải dữ liệu thành công! (Dữ liệu chung cho cả lớp)";
+                setTimeout(() => { saveStatus.innerText = ""; }, 3000);
+
+            } catch (e) {
+                console.error("Lỗi đọc dữ liệu:", e);
+                saveStatus.style.color = "#d63031";
+                saveStatus.innerText = "❌ Lỗi kết nối máy chủ! Hãy kiểm tra lại kết nối mạng hoặc quy tắc Firebase.";
+                renderBusyTable(); 
+            }
+        }
+
+        async function saveToCloud() {
+            saveStatus.style.color = "#e1b12c";
+            saveStatus.innerText = "⏳ Đang lưu lên mạng...";
+            try {
+                await fetch(FIREBASE_URL, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(membersData)
+                });
+                
+                saveStatus.style.color = "#00b894";
+                saveStatus.innerText = "✓ Đã lưu thay đổi cho tất cả mọi người cùng xem!";
+                setTimeout(() => { saveStatus.innerText = ""; }, 2000);
+            } catch (e) {
+                console.error("Lỗi lưu dữ liệu:", e);
+                saveStatus.style.color = "#d63031";
+                saveStatus.innerText = "❌ Lỗi! Chưa lưu được.";
+            }
+        }
+
+        function renderBusyTable() {
+            busyTableBody.innerHTML = "";
+            membersData.forEach((member, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><input type="text" class="table-input" value="${escapeHtml(member.name)}" placeholder="Tên bạn số ${index + 1}" oninput="updateName(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" value="${escapeHtml(member.busy)}" placeholder="VD: T2 8h30-10h30, T5 14-17" oninput="updateBusy(${index}, this.value)"></td>
+                `;
+                busyTableBody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(text) {
+            return text ? text.replace(/"/g, '&quot;') : '';
+        }
+
+        function scheduleCloudSave() {
+            clearTimeout(saveTimeout);
+            saveStatus.style.color = "#636e72";
+            saveStatus.innerText = "⏳ Đang chờ gõ xong...";
+            saveTimeout = setTimeout(() => {
+                saveToCloud();
+            }, 1500);
+        }
+
+        function updateName(index, value) {
+            membersData[index].name = value;
+            updateFreeTimeSummary();
+            scheduleCloudSave();
+        }
+
+        function updateBusy(index, value) {
+            membersData[index].busy = value;
+            updateFreeTimeSummary();
+            scheduleCloudSave();
+        }
+
+        function clearAllData() {
+            if (confirm("Cậu có chắc muốn XÓA TOÀN BỘ dữ liệu của cả lớp trên mạng không? Mọi người đều sẽ mất dữ liệu.")) {
+                membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
+                renderBusyTable();
+                updateFreeTimeSummary();
+                saveToCloud(); 
+            }
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('busyTab').classList.remove('active');
+            document.getElementById('freeTab').classList.remove('active');
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons[0].classList.remove('active');
+            buttons[1].classList.remove('active');
+
+            if (tabName === 'busy') {
+                document.getElementById('busyTab').classList.add('active');
+                buttons[0].classList.add('active');
+            } else {
+                document.getElementById('freeTab').classList.add('active');
+                buttons[1].classList.add('active');
+                updateFreeTimeSummary();
+            }
+        }
+
+        function parseTimeToMinutes(hStr, mStr) {
+            let h = parseInt(hStr, 10);
+            let m = mStr ? parseInt(mStr, 10) : 0;
+            return h * 60 + m;
+        }
+
+        function formatMinutesToTime(totalMinutes) {
+            let h = Math.floor(totalMinutes / 60);
+            let m = totalMinutes % 60;
+            if (m === 0) return `${h}h`;
+            return `${h}h${m < 10 ? '0' : ''}${m}`;
+        }
+
+        function parseBusyString(busyText) {
+            let text = busyText.toLowerCase();
+            let regex = /(t2|t3|t4|t5|t6|t7|cn)\s*(\d{1,2})(?:[h:](\d{1,2})p?)?\s*-\s*(\d{1,2})(?:[h:](\d{1,2})p?)?/gi;
+            let match;
+            let results = [];
+            
+            while ((match = regex.exec(text)) !== null) {
+                let day = match[1].toUpperCase();
+                let startMin = parseTimeToMinutes(match[2], match[3]);
+                let endMin = parseTimeToMinutes(match[4], match[5]);
+                
+                let dayStartLimit = START_HOUR * 60;
+                let dayEndLimit = END_HOUR * 60;
+
+                if (startMin < endMin && startMin >= dayStartLimit && endMin <= dayEndLimit) {
+                    results.push({ day, startMin, endMin });
+                }
+            }
+            return results;
+        }
+
+        function updateFreeTimeSummary() {
             let activeMembers = membersData.filter(m => m.name.trim() !== "");
             
             if (activeMembers.length === 0) {
@@ -10,11 +304,8 @@ function updateFreeTimeSummary() {
             let endTotalMin = END_HOUR * 60;
 
             let schedule = {};
-            let absentAllDay = {}; // Tính năng mới: Bộ lọc lưu những người vắng cả ngày
-
             daysOfWeek.forEach(day => {
                 schedule[day] = {};
-                absentAllDay[day] = [];
                 for (let t = startTotalMin; t < endTotalMin; t += TIME_STEP) {
                     schedule[day][t] = []; 
                 }
@@ -24,26 +315,10 @@ function updateFreeTimeSummary() {
                 let busySlots = parseBusyString(member.busy);
                 let memberName = member.name.trim();
                 
-                // Bước 1: Tính tổng số phút bận trong từng ngày của thành viên
-                let dailyBusyTime = { 'T2': 0, 'T3': 0, 'T4': 0, 'T5': 0, 'T6': 0, 'T7': 0, 'CN': 0 };
                 busySlots.forEach(slot => {
-                    dailyBusyTime[slot.day] += (slot.endMin - slot.startMin);
-                });
-
-                // Bước 2: Nếu bận >= 12 tiếng (720 phút), xếp vào diện "Vắng cả ngày"
-                daysOfWeek.forEach(day => {
-                    if (dailyBusyTime[day] >= 720) {
-                        absentAllDay[day].push(memberName);
-                    }
-                });
-
-                // Bước 3: Chỉ tính giờ bận lẻ tẻ vào lịch chung nếu KHÔNG thuộc diện vắng cả ngày
-                busySlots.forEach(slot => {
-                    if (!absentAllDay[slot.day].includes(memberName)) {
-                        for (let t = slot.startMin; t < slot.endMin; t += TIME_STEP) {
-                            if (schedule[slot.day] && schedule[slot.day][t]) {
-                                schedule[slot.day][t].push(memberName);
-                            }
+                    for (let t = slot.startMin; t < slot.endMin; t += TIME_STEP) {
+                        if (schedule[slot.day] && schedule[slot.day][t]) {
+                            schedule[slot.day][t].push(memberName);
                         }
                     }
                 });
@@ -64,7 +339,6 @@ function updateFreeTimeSummary() {
                             let missingArr = currentMissingStr ? currentMissingStr.split(',') : [];
                             let duration = t - currentGroupStart;
                             
-                            // Gộp khung giờ nếu kéo dài trên 30 phút
                             if (duration >= 30) {
                                 groupedResults.push({
                                     day: day,
@@ -87,14 +361,9 @@ function updateFreeTimeSummary() {
             daysOfWeek.forEach(day => {
                 let perfectToday = groupedResults.filter(r => r.day === day && r.missingCount === 0);
                 let warningToday = groupedResults.filter(r => r.day === day && r.missingCount > 0 && r.missingCount <= 3);
-                
-                // Tạo nhãn chú thích nổi bật cho các bạn vắng cả ngày
-                let absentNote = absentAllDay[day].length > 0 
-                    ? `<span style="font-size: 13px; color: #d63031; font-weight: 500; margin-left: 10px; background: #ffeaa7; padding: 3px 10px; border-radius: 12px;">(Nghỉ cả ngày: ${absentAllDay[day].join(', ')})</span>` 
-                    : "";
 
                 if (perfectToday.length > 0) {
-                    perfectHTML += `<div class="day-group"><div class="day-title">${day} ${absentNote}</div>`;
+                    perfectHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
                     perfectToday.forEach(r => {
                         perfectHTML += `<div class="time-badge">${formatMinutesToTime(r.startMin)} - ${formatMinutesToTime(r.endMin)}</div>`;
                     });
@@ -102,7 +371,7 @@ function updateFreeTimeSummary() {
                 }
 
                 if (warningToday.length > 0) {
-                    warningHTML += `<div class="day-group"><div class="day-title">${day} ${absentNote}</div>`;
+                    warningHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
                     warningToday.forEach(r => {
                         warningHTML += `
                             <div class="time-badge">
@@ -119,15 +388,15 @@ function updateFreeTimeSummary() {
             if (perfectHTML !== "") {
                 finalOutput += `
                     <div class="result-box perfect">
-                        <h3>🌟 Giờ Vàng (Cả nhóm rảnh)</h3>
-                        <p>Các khung giờ hoàn hảo nhất (đã tự động tính toán lại, không bao gồm các bạn nghỉ cả ngày):</p>
+                        <h3>🌟 Giờ Vàng (Cả nhóm 100% rảnh)</h3>
+                        <p>Các khung giờ hoàn hảo nhất trong tuần:</p>
                         ${perfectHTML}
                     </div>`;
             } else {
                 finalOutput += `
                     <div class="result-box perfect" style="border-color: #b2bec3;">
                         <h3 style="color: #636e72;">🌟 Giờ Vàng</h3>
-                        <p>Hiện chưa tìm thấy khung giờ nào trên 30 phút mà tất cả mọi người (trừ người nghỉ cả ngày) đều rảnh.</p>
+                        <p>Hiện chưa tìm thấy khung giờ nào trên 30 phút mà tất cả mọi người đều rảnh.</p>
                     </div>`;
             }
 
@@ -142,3 +411,8 @@ function updateFreeTimeSummary() {
 
             freeSummaryContent.innerHTML = finalOutput;
         }
+
+        loadFromCloud();
+    </script>
+</body>
+</html>
