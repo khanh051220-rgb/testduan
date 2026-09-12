@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống Kê Lịch Tập 20/11 - Tự Động Hóa Giờ Cụ Thể</title>
+    <title>Thống Kê Lịch Tập 20/11 - Đồng Bộ Đám Mây</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -101,7 +101,7 @@
         <div class="header-actions">
             <div class="tab-buttons">
                 <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Thời Gian Bận</button>
-                <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh (Tự động tính)</button>
+                <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh Chung</button>
             </div>
             <button class="btn-reset" onclick="clearAllData()">🗑️ Xóa Tất Cả Dữ Liệu</button>
         </div>
@@ -113,7 +113,7 @@
                 Hỗ trợ các kiểu gõ: <b>10h30</b>, <b>10:30</b>, <b>10h30p</b>, <b>8h-10h30</b>...<br>
                 <i>Ví dụ:</i> <span style="font-weight:bold;">T2 8h30-10h30, T3 14:15-16:45, CN 18-20</span>
             </div>
-            <div class="save-status" id="saveStatus">✓ Đã tự động lưu dữ liệu</div>
+            <div class="save-status" id="saveStatus">Đang tải dữ liệu từ máy chủ...</div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -134,52 +134,68 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'LICH_TAP_2011_MEMBERS_DATA';
+        // CẬU HÃY DÁN LINK FIREBASE VÀO ĐÂY, VÀ NHỚ PHẢI CÓ "/lich_tap.json" Ở CUỐI CÙNG NHÉ!
+        const FIREBASE_URL = "https://PROJECT_CUA_CAU.asia-southeast1.firebasedatabase.app/lich_tap.json";
+
         const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-        const START_HOUR = 6;  // 6h00 sáng
-        const END_HOUR = 23;   // 23h00 đêm
-        const TIME_STEP = 15;  // Tính toán chính xác theo từng 15 phút
+        const START_HOUR = 6;  
+        const END_HOUR = 23;   
+        const TIME_STEP = 15;  
 
         let membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
+        let saveTimeout; // Biến dùng để hẹn giờ lưu dữ liệu
 
         const busyTableBody = document.getElementById('busyTableBody');
         const freeSummaryContent = document.getElementById('freeSummaryContent');
         const saveStatus = document.getElementById('saveStatus');
 
-        // Khởi tạo ứng dụng & Tải dữ liệu đã lưu
-        function initApp() {
-            loadFromLocalStorage();
-            renderBusyTable();
-            updateFreeTimeSummary();
-        }
-
-        // Đọc dữ liệu từ LocalStorage
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed)) {
-                        parsed.forEach((item, index) => {
-                            if (index < membersData.length) {
-                                membersData[index] = item;
-                            }
-                        });
-                    }
-                } catch (e) {
-                    console.error("Lỗi đọc dữ liệu:", e);
+        // Tải dữ liệu từ mạng về khi vừa mở web
+        async function loadFromCloud() {
+            try {
+                const response = await fetch(FIREBASE_URL);
+                const data = await response.json();
+                
+                if (data && Array.isArray(data)) {
+                    membersData = data;
                 }
+                
+                renderBusyTable();
+                updateFreeTimeSummary();
+                saveStatus.style.color = "#00b894";
+                saveStatus.innerText = "✓ Tải dữ liệu thành công! (Dữ liệu chung cho cả lớp)";
+                setTimeout(() => { saveStatus.innerText = ""; }, 3000);
+
+            } catch (e) {
+                console.error("Lỗi đọc dữ liệu:", e);
+                saveStatus.style.color = "#d63031";
+                saveStatus.innerText = "❌ Lỗi kết nối máy chủ! Hãy kiểm tra lại link Firebase.";
+                renderBusyTable(); // Vẫn hiển thị bảng trắng nếu lỗi
             }
         }
 
-        // Lưu dữ liệu vào LocalStorage
-        function saveToLocalStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(membersData));
-            saveStatus.innerText = "✓ Đã tự động lưu dữ liệu";
-            setTimeout(() => { saveStatus.innerText = ""; }, 2000);
+        // Lưu dữ liệu lên mạng
+        async function saveToCloud() {
+            saveStatus.style.color = "#e1b12c";
+            saveStatus.innerText = "⏳ Đang lưu lên mạng...";
+            try {
+                await fetch(FIREBASE_URL, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(membersData)
+                });
+                
+                saveStatus.style.color = "#00b894";
+                saveStatus.innerText = "✓ Đã lưu thay đổi cho tất cả mọi người cùng xem!";
+                setTimeout(() => { saveStatus.innerText = ""; }, 2000);
+            } catch (e) {
+                console.error("Lỗi lưu dữ liệu:", e);
+                saveStatus.style.color = "#d63031";
+                saveStatus.innerText = "❌ Lỗi! Chưa lưu được.";
+            }
         }
 
-        // Hiển thị bảng nhập liệu
         function renderBusyTable() {
             busyTableBody.innerHTML = "";
             membersData.forEach((member, index) => {
@@ -197,24 +213,34 @@
             return text ? text.replace(/"/g, '&quot;') : '';
         }
 
+        // Kỹ thuật Debounce: Chờ 1.5 giây sau khi ngừng gõ mới lưu lên mạng để không làm lag máy chủ
+        function scheduleCloudSave() {
+            clearTimeout(saveTimeout);
+            saveStatus.style.color = "#636e72";
+            saveStatus.innerText = "⏳ Đang chờ gõ xong...";
+            saveTimeout = setTimeout(() => {
+                saveToCloud();
+            }, 1500);
+        }
+
         function updateName(index, value) {
             membersData[index].name = value;
-            saveToLocalStorage();
             updateFreeTimeSummary();
+            scheduleCloudSave();
         }
 
         function updateBusy(index, value) {
             membersData[index].busy = value;
-            saveToLocalStorage();
             updateFreeTimeSummary();
+            scheduleCloudSave();
         }
 
         function clearAllData() {
-            if (confirm("Cậu có chắc muốn xóa hết danh sách và làm lại từ đầu không?")) {
-                localStorage.removeItem(STORAGE_KEY);
+            if (confirm("Cậu có chắc muốn XÓA TOÀN BỘ dữ liệu của cả lớp trên mạng không? Mọi người đều sẽ mất dữ liệu.")) {
                 membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
                 renderBusyTable();
                 updateFreeTimeSummary();
+                saveToCloud(); // Xóa xong phải lưu bảng trắng lên mạng luôn
             }
         }
 
@@ -235,14 +261,12 @@
             }
         }
 
-        // Hàm đổi giờ + phút sang tổng số phút trong ngày (Ví dụ: 10h30 -> 630 phút)
         function parseTimeToMinutes(hStr, mStr) {
             let h = parseInt(hStr, 10);
             let m = mStr ? parseInt(mStr, 10) : 0;
             return h * 60 + m;
         }
 
-        // Hàm đổi tổng số phút thành chuỗi hiển thị đẹp (Ví dụ: 630 -> "10h30", 600 -> "10h")
         function formatMinutesToTime(totalMinutes) {
             let h = Math.floor(totalMinutes / 60);
             let m = totalMinutes % 60;
@@ -250,10 +274,8 @@
             return `${h}h${m < 10 ? '0' : ''}${m}`;
         }
 
-        // Phân tích cú pháp chuỗi giờ bận (Nhận diện 10h30, 10:30, 10h30p...)
         function parseBusyString(busyText) {
             let text = busyText.toLowerCase();
-            // Regex hỗ trợ các dạng: T2 8h30-10h30, T3 8:15-10:45, CN 18-20
             let regex = /(t2|t3|t4|t5|t6|t7|cn)\s*(\d{1,2})(?:[h:](\d{1,2})p?)?\s*-\s*(\d{1,2})(?:[h:](\d{1,2})p?)?/gi;
             let match;
             let results = [];
@@ -273,7 +295,6 @@
             return results;
         }
 
-        // Thuật toán tính toán và tổng hợp giờ rảnh
         function updateFreeTimeSummary() {
             let activeMembers = membersData.filter(m => m.name.trim() !== "");
             
@@ -285,7 +306,6 @@
             let startTotalMin = START_HOUR * 60;
             let endTotalMin = END_HOUR * 60;
 
-            // 1. Khởi tạo Ma trận thời gian theo từng nấc 15 phút
             let schedule = {};
             daysOfWeek.forEach(day => {
                 schedule[day] = {};
@@ -294,7 +314,6 @@
                 }
             });
 
-            // 2. Đánh dấu những người bận vào từng block 15 phút
             activeMembers.forEach(member => {
                 let busySlots = parseBusyString(member.busy);
                 let memberName = member.name.trim();
@@ -308,7 +327,6 @@
                 });
             });
 
-            // 3. Gộp các khoảng thời gian liên tiếp có cùng trạng thái vắng
             let groupedResults = [];
             
             daysOfWeek.forEach(day => {
@@ -324,7 +342,6 @@
                             let missingArr = currentMissingStr ? currentMissingStr.split(',') : [];
                             let duration = t - currentGroupStart;
                             
-                            // Lưu những khoảng rảnh từ 30 phút trở lên để tranh thủ tập
                             if (duration >= 30) {
                                 groupedResults.push({
                                     day: day,
@@ -341,7 +358,6 @@
                 }
             });
 
-            // 4. Tạo giao diện kết quả
             let perfectHTML = "";
             let warningHTML = "";
 
@@ -399,8 +415,8 @@
             freeSummaryContent.innerHTML = finalOutput;
         }
 
-        // Chạy ứng dụng khi tải xong trang
-        initApp();
+        // Chạy hàm lấy dữ liệu từ Firebase ngay khi vừa mở web
+        loadFromCloud();
     </script>
 </body>
 </html>
