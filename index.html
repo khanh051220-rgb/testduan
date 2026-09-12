@@ -23,33 +23,48 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
         h1 { text-align: center; color: #6c5ce7; margin-bottom: 5px; font-weight: 600; }
-        p.subtitle { text-align: center; color: #636e72; margin-bottom: 30px; }
+        p.subtitle { text-align: center; color: #636e72; margin-bottom: 25px; }
         
-        .tab-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab-buttons { display: flex; gap: 10px; }
         .tab-btn {
             background-color: #f1f2f6; color: #2d3436; border: 2px solid #dfe6e9;
-            padding: 12px 25px; font-size: 16px; font-weight: 600; border-radius: 12px;
+            padding: 10px 20px; font-size: 15px; font-weight: 600; border-radius: 10px;
             cursor: pointer; transition: all 0.3s ease;
         }
-        .tab-btn.active { background-color: #6c5ce7; color: white; border-color: #6c5ce7; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); }
+        .tab-btn.active { background-color: #6c5ce7; color: white; border-color: #6c5ce7; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+
+        .btn-reset {
+            background-color: #ff7675; color: white; border: none;
+            padding: 10px 18px; font-size: 14px; font-weight: 600; border-radius: 10px;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-reset:hover { background-color: #d63031; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         .table-responsive { overflow-x: auto; max-height: 500px; border: 1px solid #dfe6e9; border-radius: 12px; margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 14px 16px; text-align: center; border-bottom: 1px solid #dfe6e9; }
+        th, td { padding: 12px 14px; text-align: center; border-bottom: 1px solid #dfe6e9; }
         th { background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: white; position: sticky; top: 0; z-index: 1; font-weight: 600; }
         tbody tr:nth-child(even) { background-color: #f9f9fb; }
         tbody tr:hover { background-color: #f1f2f6; }
 
         input.table-input {
-            width: 90%; padding: 10px; border: 1px solid #b2bec3; border-radius: 8px;
+            width: 90%; padding: 8px 12px; border: 1px solid #b2bec3; border-radius: 8px;
             font-family: 'Poppins', sans-serif; transition: border-color 0.2s;
         }
         input.table-input:focus { border-color: #6c5ce7; outline: none; box-shadow: 0 0 5px rgba(108, 92, 231, 0.3); }
 
-        /* Styling cho Tab Kết quả */
         .result-box { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
         .result-box.perfect { border-left: 6px solid #00b894; }
         .result-box.warning { border-left: 6px solid #fdcb6e; }
@@ -72,6 +87,9 @@
             background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14.5px;
             color: #856404; margin-bottom: 15px; border: 1px solid #ffeeba;
         }
+        .save-status {
+            font-size: 13px; color: #00b894; font-weight: 600; margin-top: 5px; text-align: right; height: 18px;
+        }
     </style>
 </head>
 <body>
@@ -80,24 +98,29 @@
         <h1>Lịch Tập Văn Nghệ 20/11</h1>
         <p class="subtitle">Tìm nhanh khung giờ trống cụ thể để tranh thủ tập luyện</p>
 
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Thời Gian Bận</button>
-            <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh (Tự động tính)</button>
+        <div class="header-actions">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Thời Gian Bận</button>
+                <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh (Tự động tính)</button>
+            </div>
+            <button class="btn-reset" onclick="clearAllData()">🗑️ Xóa Tất Cả Dữ Liệu</button>
         </div>
 
         <div id="busyTab" class="tab-content active">
             <div class="instruction">
-                <b>💡 Hướng dẫn nhập liệu quan trọng:</b><br>
-                Vui lòng nhập theo cú pháp: <b>[Thứ] [giờ bắt đầu]-[giờ kết thúc]</b>.<br>
-                <i>Ví dụ:</i> <span style="font-weight:bold;">T2 8-10, T3 14-16, CN 18-20</span> (nghĩa là Thứ 2 bận từ 8h đến 10h, Thứ 3 bận từ 14h đến 16h...)
+                <b>💡 Hướng dẫn nhập giờ lẻ phút:</b><br>
+                Cú pháp: <b>[Thứ] [giờ bắt đầu]-[giờ kết thúc]</b>.<br>
+                Hỗ trợ các kiểu gõ: <b>10h30</b>, <b>10:30</b>, <b>10h30p</b>, <b>8h-10h30</b>...<br>
+                <i>Ví dụ:</i> <span style="font-weight:bold;">T2 8h30-10h30, T3 14:15-16:45, CN 18-20</span>
             </div>
+            <div class="save-status" id="saveStatus">✓ Đã tự động lưu dữ liệu</div>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>STT</th>
                             <th>Họ và Tên</th>
-                            <th>Thời Gian Bận (Nhập theo ví dụ)</th>
+                            <th>Thời Gian Bận (Lưu tự động)</th>
                         </tr>
                     </thead>
                     <tbody id="busyTableBody"></tbody>
@@ -111,30 +134,89 @@
     </div>
 
     <script>
-        const membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
+        const STORAGE_KEY = 'LICH_TAP_2011_MEMBERS_DATA';
         const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-        const START_HOUR = 6; // Khởi đầu từ 6h sáng
-        const END_HOUR = 23;  // Kết thúc lúc 23h đêm
+        const START_HOUR = 6;  // 6h00 sáng
+        const END_HOUR = 23;   // 23h00 đêm
+        const TIME_STEP = 15;  // Tính toán chính xác theo từng 15 phút
+
+        let membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
 
         const busyTableBody = document.getElementById('busyTableBody');
         const freeSummaryContent = document.getElementById('freeSummaryContent');
+        const saveStatus = document.getElementById('saveStatus');
 
+        // Khởi tạo ứng dụng & Tải dữ liệu đã lưu
         function initApp() {
+            loadFromLocalStorage();
+            renderBusyTable();
+            updateFreeTimeSummary();
+        }
+
+        // Đọc dữ liệu từ LocalStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        parsed.forEach((item, index) => {
+                            if (index < membersData.length) {
+                                membersData[index] = item;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error("Lỗi đọc dữ liệu:", e);
+                }
+            }
+        }
+
+        // Lưu dữ liệu vào LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(membersData));
+            saveStatus.innerText = "✓ Đã tự động lưu dữ liệu";
+            setTimeout(() => { saveStatus.innerText = ""; }, 2000);
+        }
+
+        // Hiển thị bảng nhập liệu
+        function renderBusyTable() {
             busyTableBody.innerHTML = "";
             membersData.forEach((member, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><input type="text" class="table-input" placeholder="Tên bạn số ${index + 1}" oninput="updateName(${index}, this.value)"></td>
-                    <td><input type="text" class="table-input" placeholder="VD: T2 8-10, T5 14-17" oninput="updateBusy(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" value="${escapeHtml(member.name)}" placeholder="Tên bạn số ${index + 1}" oninput="updateName(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" value="${escapeHtml(member.busy)}" placeholder="VD: T2 8h30-10h30, T5 14-17" oninput="updateBusy(${index}, this.value)"></td>
                 `;
                 busyTableBody.appendChild(row);
             });
+        }
+
+        function escapeHtml(text) {
+            return text ? text.replace(/"/g, '&quot;') : '';
+        }
+
+        function updateName(index, value) {
+            membersData[index].name = value;
+            saveToLocalStorage();
             updateFreeTimeSummary();
         }
 
-        function updateName(index, value) { membersData[index].name = value; updateFreeTimeSummary(); }
-        function updateBusy(index, value) { membersData[index].busy = value; updateFreeTimeSummary(); }
+        function updateBusy(index, value) {
+            membersData[index].busy = value;
+            saveToLocalStorage();
+            updateFreeTimeSummary();
+        }
+
+        function clearAllData() {
+            if (confirm("Cậu có chắc muốn xóa hết danh sách và làm lại từ đầu không?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
+                renderBusyTable();
+                updateFreeTimeSummary();
+            }
+        }
 
         function switchTab(tabName) {
             document.getElementById('busyTab').classList.remove('active');
@@ -153,25 +235,45 @@
             }
         }
 
-        // Hàm phân tích văn bản người dùng nhập vào thành các con số giờ
+        // Hàm đổi giờ + phút sang tổng số phút trong ngày (Ví dụ: 10h30 -> 630 phút)
+        function parseTimeToMinutes(hStr, mStr) {
+            let h = parseInt(hStr, 10);
+            let m = mStr ? parseInt(mStr, 10) : 0;
+            return h * 60 + m;
+        }
+
+        // Hàm đổi tổng số phút thành chuỗi hiển thị đẹp (Ví dụ: 630 -> "10h30", 600 -> "10h")
+        function formatMinutesToTime(totalMinutes) {
+            let h = Math.floor(totalMinutes / 60);
+            let m = totalMinutes % 60;
+            if (m === 0) return `${h}h`;
+            return `${h}h${m < 10 ? '0' : ''}${m}`;
+        }
+
+        // Phân tích cú pháp chuỗi giờ bận (Nhận diện 10h30, 10:30, 10h30p...)
         function parseBusyString(busyText) {
-            let text = busyText.toLowerCase().replace(/h/g, ''); // Bỏ chữ 'h' nếu có (vd: 8h-10h -> 8-10)
-            // Biểu thức chính quy (Regex) tìm mẫu: "T2 đến CN" + "bất kỳ chữ gì" + "số - số"
-            let regex = /(t2|t3|t4|t5|t6|t7|cn).*?(\d{1,2})\s*-\s*(\d{1,2})/g;
+            let text = busyText.toLowerCase();
+            // Regex hỗ trợ các dạng: T2 8h30-10h30, T3 8:15-10:45, CN 18-20
+            let regex = /(t2|t3|t4|t5|t6|t7|cn)\s*(\d{1,2})(?:[h:](\d{1,2})p?)?\s*-\s*(\d{1,2})(?:[h:](\d{1,2})p?)?/gi;
             let match;
             let results = [];
             
             while ((match = regex.exec(text)) !== null) {
                 let day = match[1].toUpperCase();
-                let start = parseInt(match[2]);
-                let end = parseInt(match[3]);
-                if(start < end && start >= START_HOUR && end <= END_HOUR) {
-                    results.push({ day, start, end });
+                let startMin = parseTimeToMinutes(match[2], match[3]);
+                let endMin = parseTimeToMinutes(match[4], match[5]);
+                
+                let dayStartLimit = START_HOUR * 60;
+                let dayEndLimit = END_HOUR * 60;
+
+                if (startMin < endMin && startMin >= dayStartLimit && endMin <= dayEndLimit) {
+                    results.push({ day, startMin, endMin });
                 }
             }
             return results;
         }
 
+        // Thuật toán tính toán và tổng hợp giờ rảnh
         function updateFreeTimeSummary() {
             let activeMembers = membersData.filter(m => m.name.trim() !== "");
             
@@ -180,75 +282,77 @@
                 return;
             }
 
-            // 1. Khởi tạo ma trận lịch trình (Mỗi giờ chứa 1 danh sách những người bận)
+            let startTotalMin = START_HOUR * 60;
+            let endTotalMin = END_HOUR * 60;
+
+            // 1. Khởi tạo Ma trận thời gian theo từng nấc 15 phút
             let schedule = {};
             daysOfWeek.forEach(day => {
                 schedule[day] = {};
-                for (let h = START_HOUR; h < END_HOUR; h++) {
-                    schedule[day][h] = []; 
+                for (let t = startTotalMin; t < endTotalMin; t += TIME_STEP) {
+                    schedule[day][t] = []; 
                 }
             });
 
-            // 2. Điền thông tin người bận vào ma trận
+            // 2. Đánh dấu những người bận vào từng block 15 phút
             activeMembers.forEach(member => {
                 let busySlots = parseBusyString(member.busy);
                 let memberName = member.name.trim();
                 
                 busySlots.forEach(slot => {
-                    for (let h = slot.start; h < slot.end; h++) {
-                        if (schedule[slot.day] && schedule[slot.day][h]) {
-                            schedule[slot.day][h].push(memberName);
+                    for (let t = slot.startMin; t < slot.endMin; t += TIME_STEP) {
+                        if (schedule[slot.day] && schedule[slot.day][t]) {
+                            schedule[slot.day][t].push(memberName);
                         }
                     }
                 });
             });
 
-            // 3. Thuật toán gộp giờ liên tiếp
+            // 3. Gộp các khoảng thời gian liên tiếp có cùng trạng thái vắng
             let groupedResults = [];
             
             daysOfWeek.forEach(day => {
                 let currentGroupStart = null;
                 let currentMissingStr = null;
 
-                for (let h = START_HOUR; h <= END_HOUR; h++) {
-                    // Nếu là giờ cuối cùng thì ép vòng lặp đóng nhóm lại
-                    let missingList = (h < END_HOUR) ? schedule[day][h] : ["FORCE_CLOSE"];
-                    let missingStr = missingList.sort().join(','); // Tạo chuỗi chuẩn để so sánh (VD: "Nam,Hải")
+                for (let t = startTotalMin; t <= endTotalMin; t += TIME_STEP) {
+                    let missingList = (t < endTotalMin) ? schedule[day][t] : ["FORCE_CLOSE"];
+                    let missingStr = missingList.sort().join(',');
 
-                    // Nếu danh sách người vắng thay đổi so với giờ trước -> Đóng nhóm cũ, mở nhóm mới
                     if (currentMissingStr !== missingStr) {
                         if (currentGroupStart !== null) {
                             let missingArr = currentMissingStr ? currentMissingStr.split(',') : [];
-                            // Chỉ lưu những khoảng thời gian kéo dài ít nhất 1 tiếng
-                            if (h - currentGroupStart >= 1) {
+                            let duration = t - currentGroupStart;
+                            
+                            // Lưu những khoảng rảnh từ 30 phút trở lên để tranh thủ tập
+                            if (duration >= 30) {
                                 groupedResults.push({
                                     day: day,
-                                    start: currentGroupStart,
-                                    end: h,
+                                    startMin: currentGroupStart,
+                                    endMin: t,
                                     missing: missingArr,
                                     missingCount: missingArr.length
                                 });
                             }
                         }
-                        currentGroupStart = h;
+                        currentGroupStart = t;
                         currentMissingStr = missingStr;
                     }
                 }
             });
 
-            // 4. Phân loại và tạo HTML hiển thị
-            let perfectHTML = ""; // Nhóm rảnh 100%
-            let warningHTML = ""; // Nhóm vắng 1-3 người
+            // 4. Tạo giao diện kết quả
+            let perfectHTML = "";
+            let warningHTML = "";
 
             daysOfWeek.forEach(day => {
-                // Lọc kết quả theo từng ngày
                 let perfectToday = groupedResults.filter(r => r.day === day && r.missingCount === 0);
                 let warningToday = groupedResults.filter(r => r.day === day && r.missingCount > 0 && r.missingCount <= 3);
 
                 if (perfectToday.length > 0) {
                     perfectHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
                     perfectToday.forEach(r => {
-                        perfectHTML += `<div class="time-badge">${r.start}h - ${r.end}h</div>`;
+                        perfectHTML += `<div class="time-badge">${formatMinutesToTime(r.startMin)} - ${formatMinutesToTime(r.endMin)}</div>`;
                     });
                     perfectHTML += `</div>`;
                 }
@@ -258,7 +362,7 @@
                     warningToday.forEach(r => {
                         warningHTML += `
                             <div class="time-badge">
-                                ${r.start}h - ${r.end}h
+                                ${formatMinutesToTime(r.startMin)} - ${formatMinutesToTime(r.endMin)}
                                 <span class="missing-list">(Vắng: ${r.missing.join(', ')})</span>
                             </div>`;
                     });
@@ -266,7 +370,6 @@
                 }
             });
 
-            // 5. Xuất ra màn hình
             let finalOutput = "";
 
             if (perfectHTML !== "") {
@@ -280,7 +383,7 @@
                 finalOutput += `
                     <div class="result-box perfect" style="border-color: #b2bec3;">
                         <h3 style="color: #636e72;">🌟 Giờ Vàng</h3>
-                        <p>Hiện chưa tìm thấy khung giờ nào trên 1 tiếng mà tất cả mọi người đều rảnh.</p>
+                        <p>Hiện chưa tìm thấy khung giờ nào trên 30 phút mà tất cả mọi người đều rảnh.</p>
                     </div>`;
             }
 
@@ -288,7 +391,7 @@
                 finalOutput += `
                     <div class="result-box warning">
                         <h3>⚠️ Giờ Tập Tạm Ổn (Vắng 1-3 người)</h3>
-                        <p>Các khung giờ có thể tranh thủ (đã ghi chú người vắng mặt):</p>
+                        <p>Các khung giờ có thể tranh thủ tập (đã ghi chú người vắng):</p>
                         ${warningHTML}
                     </div>`;
             }
@@ -296,6 +399,7 @@
             freeSummaryContent.innerHTML = finalOutput;
         }
 
+        // Chạy ứng dụng khi tải xong trang
         initApp();
     </script>
 </body>
