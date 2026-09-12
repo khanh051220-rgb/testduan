@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống Kê Lịch Tập 20/11 - Chia Mục Rảnh/Bận</title>
+    <title>Thống Kê Lịch Tập 20/11 - Tự Động Hóa</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -34,7 +34,6 @@
             margin-bottom: 30px;
         }
         
-        /* Thanh chuyển đổi 2 mục (Tabs) */
         .tab-buttons {
             display: flex;
             justify-content: center;
@@ -59,13 +58,8 @@
             box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
         }
 
-        /* Nội dung của từng mục */
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .table-responsive {
             overflow-x: auto;
@@ -91,12 +85,8 @@
             z-index: 1;
             font-weight: 600;
         }
-        tbody tr:nth-child(even) {
-            background-color: #f9f9fb;
-        }
-        tbody tr:hover {
-            background-color: #f1f2f6;
-        }
+        tbody tr:nth-child(even) { background-color: #f9f9fb; }
+        tbody tr:hover { background-color: #f1f2f6; }
 
         input.table-input {
             width: 90%;
@@ -112,21 +102,48 @@
             box-shadow: 0 0 5px rgba(108, 92, 231, 0.3);
         }
 
-        /* Khung hiển thị giờ rảnh */
-        .free-summary-box {
+        /* Styling cho Tab Tổng Hợp */
+        .result-box {
             background: #f8f9fa;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
-            border-left: 6px solid #00b894;
+            margin-bottom: 20px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
-        .free-summary-box h3 {
-            color: #00b894;
-            margin-top: 0;
+        .result-box.perfect { border-left: 6px solid #00b894; }
+        .result-box.warning { border-left: 6px solid #fdcb6e; }
+        .result-box.bad { border-left: 6px solid #d63031; }
+        
+        .result-box h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .perfect h3 { color: #00b894; }
+        .warning h3 { color: #e1b12c; }
+        
+        .time-badge {
+            display: inline-block;
+            background: #dfe6e9;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: 600;
+            color: #2d3436;
         }
-        ul {
-            padding-left: 20px;
-            line-height: 1.8;
+        .perfect .time-badge { background: #55efc4; color: #006266; }
+        .warning .time-badge { background: #ffeaa7; color: #d35400; }
+        
+        .missing-list {
+            font-size: 14px;
+            color: #636e72;
+            margin-top: 5px;
+            font-weight: normal;
+        }
+        .instruction {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #2d3436;
+            margin-bottom: 15px;
+            text-align: center;
         }
     </style>
 </head>
@@ -134,17 +151,19 @@
 
     <div class="container">
         <h1>Lịch Tập Văn Nghệ 20/11</h1>
-        <p class="subtitle">Bảng thống kê tên, giờ bận và tự động tổng hợp giờ rảnh của 31 thành viên</p>
+        <p class="subtitle">Tìm nhanh "Giờ Vàng" để cả đội cùng tập luyện</p>
 
-        <!-- Các nút bấm chuyển mục -->
         <div class="tab-buttons">
-            <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Tên & Thời Gian Bận</button>
-            <button class="tab-btn" onclick="switchTab('free')">2. Thời Gian Rảnh (Tổng Hợp)</button>
+            <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Thời Gian Bận</button>
+            <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh Chung (Tự động)</button>
         </div>
 
         <!-- MỤC 1: NHẬP TÊN VÀ THỜI GIAN BẬN -->
         <div id="busyTab" class="tab-content active">
-            <p style="text-align: center; color: #636e72; margin-bottom: 20px;">Mời các bạn điền họ tên và thời gian bận vào bảng dưới đây:</p>
+            <div class="instruction">
+                <b>💡 Gợi ý nhập liệu:</b> Để máy tính tính toán chính xác, hãy nhập ca bận theo cú pháp: 
+                <span style="color:#d63031; font-weight:bold;">Sáng T2, Chiều T5, Tối CN</span>... (ngăn cách bằng dấu phẩy).
+            </div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -155,106 +174,158 @@
                         </tr>
                     </thead>
                     <tbody id="busyTableBody">
-                        <!-- JavaScript tự động sinh ra 31 dòng trống -->
+                        <!-- JS tạo 31 dòng -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- MỤC 2: XEM THỜI GIAN RẢNH -->
+        <!-- MỤC 2: XEM THỜI GIAN RẢNH TỰ ĐỘNG -->
         <div id="freeTab" class="tab-content">
-            <div class="free-summary-box">
-                <h3>Tổng Hợp Lịch Rảnh Của Cả Nhóm</h3>
-                <div id="freeSummaryContent">Đang tổng hợp...</div>
+            <div id="freeSummaryContent">
+                <!-- Sẽ tự động đổ dữ liệu vào đây -->
             </div>
         </div>
-
     </div>
 
     <script>
-        // Tạo sẵn mảng gồm 31 phần tử trống để cậu hoặc các bạn tự điền tên và giờ bận
         const membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
+        
+        // Tạo ra 21 khung giờ chuẩn (Sáng, Chiều, Tối từ T2 đến CN)
+        const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        const shifts = ['Sáng', 'Chiều', 'Tối'];
+        const allTimeSlots = [];
+        days.forEach(day => {
+            shifts.forEach(shift => {
+                allTimeSlots.push(`${shift} ${day}`);
+            });
+        });
 
         const busyTableBody = document.getElementById('busyTableBody');
         const freeSummaryContent = document.getElementById('freeSummaryContent');
 
-        // Khởi tạo bảng danh sách trống cho 31 người
         function initApp() {
             busyTableBody.innerHTML = "";
             membersData.forEach((member, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><input type="text" class="table-input" placeholder="Nhập tên bạn số ${index + 1}" value="${member.name}" oninput="updateName(${index}, this.value)"></td>
-                    <td><input type="text" class="table-input" placeholder="Ví dụ: Bận sáng T2..." value="${member.busy}" oninput="updateBusy(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" placeholder="Tên thành viên ${index + 1}" oninput="updateName(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" placeholder="VD: Sáng T2, Chiều T6" oninput="updateBusy(${index}, this.value)"></td>
                 `;
                 busyTableBody.appendChild(row);
             });
             updateFreeTimeSummary();
         }
 
-        // Cập nhật tên khi gõ
         function updateName(index, value) {
             membersData[index].name = value;
             updateFreeTimeSummary();
         }
 
-        // Cập nhật giờ bận khi gõ
         function updateBusy(index, value) {
             membersData[index].busy = value;
             updateFreeTimeSummary();
         }
 
-        // Chuyển đổi qua lại giữa 2 Tab
         function switchTab(tabName) {
-            const busyTab = document.getElementById('busyTab');
-            const freeTab = document.getElementById('freeTab');
+            document.getElementById('busyTab').classList.remove('active');
+            document.getElementById('freeTab').classList.remove('active');
             const buttons = document.querySelectorAll('.tab-btn');
-
-            buttons.forEach(btn => btn.classList.remove('active'));
+            buttons[0].classList.remove('active');
+            buttons[1].classList.remove('active');
 
             if (tabName === 'busy') {
-                busyTab.classList.add('active');
-                freeTab.classList.remove('active');
+                document.getElementById('busyTab').classList.add('active');
                 buttons[0].classList.add('active');
             } else {
-                busyTab.classList.remove('active');
-                freeTab.classList.add('active');
+                document.getElementById('freeTab').classList.add('active');
                 buttons[1].classList.add('active');
                 updateFreeTimeSummary();
             }
         }
 
-        // Tự động tính toán và hiển thị giờ rảnh tổng hợp
+        // Hàm xóa dấu tiếng Việt giúp máy tính tìm chữ chính xác hơn (ví dụ: sang t2 = Sáng T2)
+        function removeAccents(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+
         function updateFreeTimeSummary() {
-            let summaryHTML = "<ul>";
-            let activeCount = 0;
+            let activeMembers = membersData.filter(m => m.name.trim() !== "");
+            
+            if (activeMembers.length === 0) {
+                freeSummaryContent.innerHTML = "<div class='result-box'><h3>Chưa có dữ liệu</h3><p>Vui lòng nhập tên của ít nhất 1 thành viên ở Tab 1 nhé!</p></div>";
+                return;
+            }
 
-            membersData.forEach((member, index) => {
-                const trimmedName = member.name.trim();
-                const trimmedBusy = member.busy.trim();
-                const displayName = trimmedName !== "" ? trimmedName : `Thành viên số ${index + 1}`;
+            // Tạo biến lưu trữ xem ca nào có ai bận
+            const scheduleData = {};
+            allTimeSlots.forEach(slot => scheduleData[slot] = []);
 
-                if (trimmedName !== "" || trimmedBusy !== "") {
-                    activeCount++;
-                    if (trimmedBusy !== "") {
-                        summaryHTML += `<li><b>${displayName}</b>: Bận [<span style="color: #d63031; font-weight: 500;">${trimmedBusy}</span>] $\rightarrow$ <span style="color: #00b894; font-weight: 600;">Rảnh các thời gian còn lại</span></li>`;
-                    } else {
-                        summaryHTML += `<li><b>${displayName}</b>: <span style="color: #00b894; font-weight: 600;">Chưa báo bận (Rảnh cả ngày)</span></li>`;
+            // Quét dữ liệu bận của từng người
+            activeMembers.forEach(member => {
+                const normalizedBusyText = removeAccents(member.busy);
+                allTimeSlots.forEach(slot => {
+                    const normalizedSlot = removeAccents(slot);
+                    // Nếu văn bản bận của người đó có chứa tên ca tập (ví dụ "sang t2")
+                    if (normalizedBusyText.includes(normalizedSlot)) {
+                        scheduleData[slot].push(member.name.trim());
                     }
+                });
+            });
+
+            // Phân loại kết quả
+            let perfectHTML = ""; // Nhóm rảnh 100%
+            let warningHTML = ""; // Nhóm vắng 1-3 người
+
+            allTimeSlots.forEach(slot => {
+                const missingPeople = scheduleData[slot];
+                
+                if (missingPeople.length === 0) {
+                    perfectHTML += `<div class="time-badge">${slot}</div>`;
+                } else if (missingPeople.length > 0 && missingPeople.length <= 3) {
+                    warningHTML += `
+                        <div class="time-badge">
+                            ${slot} 
+                            <div class="missing-list">(Vắng: ${missingPeople.join(', ')})</div>
+                        </div>`;
                 }
             });
 
-            summaryHTML += "</ul>";
-            if (activeCount === 0) {
-                summaryHTML = "<p style='color: #636e72;'>Chưa có thông tin tên hoặc giờ bận nào được nhập. Các bạn hãy điền vào bảng ở mục 1 nhé!</p>";
+            // Xuất ra màn hình
+            let finalOutput = "";
+
+            if (perfectHTML !== "") {
+                finalOutput += `
+                    <div class="result-box perfect">
+                        <h3>🌟 Giờ Vàng (Cả nhóm 100% rảnh)</h3>
+                        <p>Tuyệt vời! Hãy chọn những ca này để tập full đội hình:</p>
+                        <div>${perfectHTML}</div>
+                    </div>
+                `;
+            } else {
+                finalOutput += `
+                    <div class="result-box perfect" style="border-color: #b2bec3;">
+                        <h3 style="color: #636e72;">🌟 Giờ Vàng (Cả nhóm 100% rảnh)</h3>
+                        <p>Hiện tại chưa tìm thấy khung giờ nào tất cả mọi người đều rảnh.</p>
+                    </div>
+                `;
             }
-            freeSummaryContent.innerHTML = summaryHTML;
+
+            if (warningHTML !== "") {
+                finalOutput += `
+                    <div class="result-box warning">
+                        <h3>⚠️ Giờ Tập Tạm Ổn (Vắng từ 1-3 người)</h3>
+                        <p>Nếu không có Giờ Vàng, có thể cân nhắc các ca sau (máy tính đã note rõ ai vắng mặt):</p>
+                        <div>${warningHTML}</div>
+                    </div>
+                `;
+            }
+
+            freeSummaryContent.innerHTML = finalOutput;
         }
 
-        // Chạy khởi tạo khi vừa mở trang
         initApp();
     </script>
-
 </body>
 </html>
