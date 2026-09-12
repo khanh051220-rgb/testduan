@@ -355,103 +355,15 @@
                 }
             });
 
-            function updateFreeTimeSummary() {
-            let activeMembers = membersData.filter(m => m.name.trim() !== "");
-            
-            if (activeMembers.length === 0) {
-                freeSummaryContent.innerHTML = "<div class='result-box'><h3>Chưa có dữ liệu</h3><p>Vui lòng nhập tên của ít nhất 1 thành viên ở Tab 1 nhé!</p></div>";
-                return;
-            }
-
-            let startTotalMin = START_HOUR * 60;
-            let endTotalMin = END_HOUR * 60;
-
-            let schedule = {};
-            let absentAllDay = {}; // Bộ lọc lưu những người vắng cả ngày
-
-            daysOfWeek.forEach(day => {
-                schedule[day] = {};
-                absentAllDay[day] = [];
-                for (let t = startTotalMin; t < endTotalMin; t += TIME_STEP) {
-                    schedule[day][t] = []; 
-                }
-            });
-
-            activeMembers.forEach(member => {
-                let busySlots = parseBusyString(member.busy);
-                let memberName = member.name.trim();
-                
-                // Bước 1: Tính tổng số phút bận trong từng ngày của thành viên
-                let dailyBusyTime = { 'T2': 0, 'T3': 0, 'T4': 0, 'T5': 0, 'T6': 0, 'T7': 0, 'CN': 0 };
-                busySlots.forEach(slot => {
-                    dailyBusyTime[slot.day] += (slot.endMin - slot.startMin);
-                });
-
-                // Bước 2: Nếu bận >= 12 tiếng (720 phút), xếp vào diện "Vắng cả ngày"
-                daysOfWeek.forEach(day => {
-                    if (dailyBusyTime[day] >= 720) {
-                        absentAllDay[day].push(memberName);
-                    }
-                });
-
-                // Bước 3: Chỉ tính giờ bận lẻ tẻ vào lịch chung nếu KHÔNG thuộc diện vắng cả ngày
-                busySlots.forEach(slot => {
-                    if (!absentAllDay[slot.day].includes(memberName)) {
-                        for (let t = slot.startMin; t < slot.endMin; t += TIME_STEP) {
-                            if (schedule[slot.day] && schedule[slot.day][t]) {
-                                schedule[slot.day][t].push(memberName);
-                            }
-                        }
-                    }
-                });
-            });
-
-            let groupedResults = [];
-            
-            daysOfWeek.forEach(day => {
-                let currentGroupStart = null;
-                let currentMissingStr = null;
-
-                for (let t = startTotalMin; t <= endTotalMin; t += TIME_STEP) {
-                    let missingList = (t < endTotalMin) ? schedule[day][t] : ["FORCE_CLOSE"];
-                    let missingStr = missingList.sort().join(',');
-
-                    if (currentMissingStr !== missingStr) {
-                        if (currentGroupStart !== null) {
-                            let missingArr = currentMissingStr ? currentMissingStr.split(',') : [];
-                            let duration = t - currentGroupStart;
-                            
-                            // Gộp khung giờ nếu kéo dài trên 30 phút
-                            if (duration >= 30) {
-                                groupedResults.push({
-                                    day: day,
-                                    startMin: currentGroupStart,
-                                    endMin: t,
-                                    missing: missingArr,
-                                    missingCount: missingArr.length
-                                });
-                            }
-                        }
-                        currentGroupStart = t;
-                        currentMissingStr = missingStr;
-                    }
-                }
-            });
-
             let perfectHTML = "";
             let warningHTML = "";
 
             daysOfWeek.forEach(day => {
                 let perfectToday = groupedResults.filter(r => r.day === day && r.missingCount === 0);
                 let warningToday = groupedResults.filter(r => r.day === day && r.missingCount > 0 && r.missingCount <= 3);
-                
-                // Tạo nhãn chú thích cho các bạn vắng cả ngày hiển thị ngay cạnh tên thứ
-                let absentNote = absentAllDay[day].length > 0 
-                    ? `<span style="font-size: 13px; color: #d63031; font-weight: 500; margin-left: 10px; background: #ffeaa7; padding: 3px 10px; border-radius: 12px;">(Nghỉ cả ngày: ${absentAllDay[day].join(', ')})</span>` 
-                    : "";
 
                 if (perfectToday.length > 0) {
-                    perfectHTML += `<div class="day-group"><div class="day-title">${day} ${absentNote}</div>`;
+                    perfectHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
                     perfectToday.forEach(r => {
                         perfectHTML += `<div class="time-badge">${formatMinutesToTime(r.startMin)} - ${formatMinutesToTime(r.endMin)}</div>`;
                     });
@@ -459,7 +371,7 @@
                 }
 
                 if (warningToday.length > 0) {
-                    warningHTML += `<div class="day-group"><div class="day-title">${day} ${absentNote}</div>`;
+                    warningHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
                     warningToday.forEach(r => {
                         warningHTML += `
                             <div class="time-badge">
@@ -476,8 +388,8 @@
             if (perfectHTML !== "") {
                 finalOutput += `
                     <div class="result-box perfect">
-                        <h3>🌟 Giờ Vàng (Cả nhóm rảnh)</h3>
-                        <p>Các khung giờ hoàn hảo nhất (đã loại trừ người nghỉ cả ngày):</p>
+                        <h3>🌟 Giờ Vàng (Cả nhóm 100% rảnh)</h3>
+                        <p>Các khung giờ hoàn hảo nhất trong tuần:</p>
                         ${perfectHTML}
                     </div>`;
             } else {
@@ -499,6 +411,7 @@
 
             freeSummaryContent.innerHTML = finalOutput;
         }
+
         loadFromCloud();
     </script>
 </body>
