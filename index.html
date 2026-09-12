@@ -134,8 +134,8 @@
     </div>
 
     <script>
-        // CẬU HÃY DÁN LINK FIREBASE VÀO ĐÂY, VÀ NHỚ PHẢI CÓ "/lich_tap.json" Ở CUỐI CÙNG NHÉ!
-        const FIREBASE_URL = "https://console.firebase.google.com/project/lichtap2011/database/lichtap2011-default-rtdb/data/~2F";
+        // Đường link API Firebase chính xác
+        const FIREBASE_URL = "https://lichtap2011-default-rtdb.firebaseio.com/lich_tap.json";
 
         const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
         const START_HOUR = 6;  
@@ -143,13 +143,12 @@
         const TIME_STEP = 15;  
 
         let membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
-        let saveTimeout; // Biến dùng để hẹn giờ lưu dữ liệu
+        let saveTimeout; 
 
         const busyTableBody = document.getElementById('busyTableBody');
         const freeSummaryContent = document.getElementById('freeSummaryContent');
         const saveStatus = document.getElementById('saveStatus');
 
-        // Tải dữ liệu từ mạng về khi vừa mở web
         async function loadFromCloud() {
             try {
                 const response = await fetch(FIREBASE_URL);
@@ -168,12 +167,11 @@
             } catch (e) {
                 console.error("Lỗi đọc dữ liệu:", e);
                 saveStatus.style.color = "#d63031";
-                saveStatus.innerText = "❌ Lỗi kết nối máy chủ! Hãy kiểm tra lại link Firebase.";
-                renderBusyTable(); // Vẫn hiển thị bảng trắng nếu lỗi
+                saveStatus.innerText = "❌ Lỗi kết nối máy chủ! Hãy kiểm tra lại kết nối mạng hoặc quy tắc Firebase.";
+                renderBusyTable(); 
             }
         }
 
-        // Lưu dữ liệu lên mạng
         async function saveToCloud() {
             saveStatus.style.color = "#e1b12c";
             saveStatus.innerText = "⏳ Đang lưu lên mạng...";
@@ -213,7 +211,6 @@
             return text ? text.replace(/"/g, '&quot;') : '';
         }
 
-        // Kỹ thuật Debounce: Chờ 1.5 giây sau khi ngừng gõ mới lưu lên mạng để không làm lag máy chủ
         function scheduleCloudSave() {
             clearTimeout(saveTimeout);
             saveStatus.style.color = "#636e72";
@@ -240,7 +237,7 @@
                 membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
                 renderBusyTable();
                 updateFreeTimeSummary();
-                saveToCloud(); // Xóa xong phải lưu bảng trắng lên mạng luôn
+                saveToCloud(); 
             }
         }
 
@@ -415,7 +412,6 @@
             freeSummaryContent.innerHTML = finalOutput;
         }
 
-        // Chạy hàm lấy dữ liệu từ Firebase ngay khi vừa mở web
         loadFromCloud();
     </script>
 </body>
