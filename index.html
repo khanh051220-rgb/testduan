@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống Kê Lịch Tập 20/11 - Tự Động Hóa</title>
+    <title>Thống Kê Lịch Tập 20/11 - Tự Động Hóa Giờ Cụ Thể</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -16,134 +16,61 @@
         }
         .container {
             background: #ffffff;
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 35px;
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
-        h1 {
-            text-align: center;
-            color: #6c5ce7;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        p.subtitle {
-            text-align: center;
-            color: #636e72;
-            margin-bottom: 30px;
-        }
+        h1 { text-align: center; color: #6c5ce7; margin-bottom: 5px; font-weight: 600; }
+        p.subtitle { text-align: center; color: #636e72; margin-bottom: 30px; }
         
-        .tab-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+        .tab-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
         .tab-btn {
-            background-color: #f1f2f6;
-            color: #2d3436;
-            border: 2px solid #dfe6e9;
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background-color: #f1f2f6; color: #2d3436; border: 2px solid #dfe6e9;
+            padding: 12px 25px; font-size: 16px; font-weight: 600; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s ease;
         }
-        .tab-btn.active {
-            background-color: #6c5ce7;
-            color: white;
-            border-color: #6c5ce7;
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
-        }
+        .tab-btn.active { background-color: #6c5ce7; color: white; border-color: #6c5ce7; box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4); }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .table-responsive {
-            overflow-x: auto;
-            max-height: 480px;
-            border: 1px solid #dfe6e9;
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 14px 16px;
-            text-align: center;
-            border-bottom: 1px solid #dfe6e9;
-        }
-        th {
-            background: linear-gradient(135deg, #6c5ce7, #8e44ad);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-            font-weight: 600;
-        }
+        .table-responsive { overflow-x: auto; max-height: 500px; border: 1px solid #dfe6e9; border-radius: 12px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 16px; text-align: center; border-bottom: 1px solid #dfe6e9; }
+        th { background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: white; position: sticky; top: 0; z-index: 1; font-weight: 600; }
         tbody tr:nth-child(even) { background-color: #f9f9fb; }
         tbody tr:hover { background-color: #f1f2f6; }
 
         input.table-input {
-            width: 90%;
-            padding: 10px;
-            border: 1px solid #b2bec3;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
-            transition: border-color 0.2s;
+            width: 90%; padding: 10px; border: 1px solid #b2bec3; border-radius: 8px;
+            font-family: 'Poppins', sans-serif; transition: border-color 0.2s;
         }
-        input.table-input:focus {
-            border-color: #6c5ce7;
-            outline: none;
-            box-shadow: 0 0 5px rgba(108, 92, 231, 0.3);
-        }
+        input.table-input:focus { border-color: #6c5ce7; outline: none; box-shadow: 0 0 5px rgba(108, 92, 231, 0.3); }
 
-        /* Styling cho Tab Tổng Hợp */
-        .result-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
+        /* Styling cho Tab Kết quả */
+        .result-box { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
         .result-box.perfect { border-left: 6px solid #00b894; }
         .result-box.warning { border-left: 6px solid #fdcb6e; }
-        .result-box.bad { border-left: 6px solid #d63031; }
-        
         .result-box h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
         .perfect h3 { color: #00b894; }
         .warning h3 { color: #e1b12c; }
         
+        .day-group { margin-bottom: 15px; }
+        .day-title { font-weight: 600; color: #2d3436; margin-bottom: 8px; font-size: 16px; border-bottom: 1px solid #dfe6e9; padding-bottom: 5px;}
+        
         .time-badge {
-            display: inline-block;
-            background: #dfe6e9;
-            padding: 8px 15px;
-            border-radius: 20px;
-            margin: 5px;
-            font-weight: 600;
-            color: #2d3436;
+            display: inline-block; background: #dfe6e9; padding: 8px 15px;
+            border-radius: 20px; margin: 5px 10px 5px 0; font-weight: 600; color: #2d3436;
         }
         .perfect .time-badge { background: #55efc4; color: #006266; }
         .warning .time-badge { background: #ffeaa7; color: #d35400; }
         
-        .missing-list {
-            font-size: 14px;
-            color: #636e72;
-            margin-top: 5px;
-            font-weight: normal;
-        }
+        .missing-list { font-size: 13px; color: #636e72; margin-left: 5px; font-weight: normal; }
         .instruction {
-            background: #e9ecef;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #2d3436;
-            margin-bottom: 15px;
-            text-align: center;
+            background: #fff3cd; padding: 15px; border-radius: 8px; font-size: 14.5px;
+            color: #856404; margin-bottom: 15px; border: 1px solid #ffeeba;
         }
     </style>
 </head>
@@ -151,18 +78,18 @@
 
     <div class="container">
         <h1>Lịch Tập Văn Nghệ 20/11</h1>
-        <p class="subtitle">Tìm nhanh "Giờ Vàng" để cả đội cùng tập luyện</p>
+        <p class="subtitle">Tìm nhanh khung giờ trống cụ thể để tranh thủ tập luyện</p>
 
         <div class="tab-buttons">
             <button class="tab-btn active" onclick="switchTab('busy')">1. Nhập Thời Gian Bận</button>
-            <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh Chung (Tự động)</button>
+            <button class="tab-btn" onclick="switchTab('free')">2. Giờ Rảnh (Tự động tính)</button>
         </div>
 
-        <!-- MỤC 1: NHẬP TÊN VÀ THỜI GIAN BẬN -->
         <div id="busyTab" class="tab-content active">
             <div class="instruction">
-                <b>💡 Gợi ý nhập liệu:</b> Để máy tính tính toán chính xác, hãy nhập ca bận theo cú pháp: 
-                <span style="color:#d63031; font-weight:bold;">Sáng T2, Chiều T5, Tối CN</span>... (ngăn cách bằng dấu phẩy).
+                <b>💡 Hướng dẫn nhập liệu quan trọng:</b><br>
+                Vui lòng nhập theo cú pháp: <b>[Thứ] [giờ bắt đầu]-[giờ kết thúc]</b>.<br>
+                <i>Ví dụ:</i> <span style="font-weight:bold;">T2 8-10, T3 14-16, CN 18-20</span> (nghĩa là Thứ 2 bận từ 8h đến 10h, Thứ 3 bận từ 14h đến 16h...)
             </div>
             <div class="table-responsive">
                 <table>
@@ -170,36 +97,24 @@
                         <tr>
                             <th>STT</th>
                             <th>Họ và Tên</th>
-                            <th>Thời Gian Bận</th>
+                            <th>Thời Gian Bận (Nhập theo ví dụ)</th>
                         </tr>
                     </thead>
-                    <tbody id="busyTableBody">
-                        <!-- JS tạo 31 dòng -->
-                    </tbody>
+                    <tbody id="busyTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- MỤC 2: XEM THỜI GIAN RẢNH TỰ ĐỘNG -->
         <div id="freeTab" class="tab-content">
-            <div id="freeSummaryContent">
-                <!-- Sẽ tự động đổ dữ liệu vào đây -->
-            </div>
+            <div id="freeSummaryContent"></div>
         </div>
     </div>
 
     <script>
         const membersData = Array.from({ length: 31 }, () => ({ name: "", busy: "" }));
-        
-        // Tạo ra 21 khung giờ chuẩn (Sáng, Chiều, Tối từ T2 đến CN)
-        const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-        const shifts = ['Sáng', 'Chiều', 'Tối'];
-        const allTimeSlots = [];
-        days.forEach(day => {
-            shifts.forEach(shift => {
-                allTimeSlots.push(`${shift} ${day}`);
-            });
-        });
+        const daysOfWeek = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        const START_HOUR = 6; // Khởi đầu từ 6h sáng
+        const END_HOUR = 23;  // Kết thúc lúc 23h đêm
 
         const busyTableBody = document.getElementById('busyTableBody');
         const freeSummaryContent = document.getElementById('freeSummaryContent');
@@ -210,23 +125,16 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><input type="text" class="table-input" placeholder="Tên thành viên ${index + 1}" oninput="updateName(${index}, this.value)"></td>
-                    <td><input type="text" class="table-input" placeholder="VD: Sáng T2, Chiều T6" oninput="updateBusy(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" placeholder="Tên bạn số ${index + 1}" oninput="updateName(${index}, this.value)"></td>
+                    <td><input type="text" class="table-input" placeholder="VD: T2 8-10, T5 14-17" oninput="updateBusy(${index}, this.value)"></td>
                 `;
                 busyTableBody.appendChild(row);
             });
             updateFreeTimeSummary();
         }
 
-        function updateName(index, value) {
-            membersData[index].name = value;
-            updateFreeTimeSummary();
-        }
-
-        function updateBusy(index, value) {
-            membersData[index].busy = value;
-            updateFreeTimeSummary();
-        }
+        function updateName(index, value) { membersData[index].name = value; updateFreeTimeSummary(); }
+        function updateBusy(index, value) { membersData[index].busy = value; updateFreeTimeSummary(); }
 
         function switchTab(tabName) {
             document.getElementById('busyTab').classList.remove('active');
@@ -245,9 +153,23 @@
             }
         }
 
-        // Hàm xóa dấu tiếng Việt giúp máy tính tìm chữ chính xác hơn (ví dụ: sang t2 = Sáng T2)
-        function removeAccents(str) {
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        // Hàm phân tích văn bản người dùng nhập vào thành các con số giờ
+        function parseBusyString(busyText) {
+            let text = busyText.toLowerCase().replace(/h/g, ''); // Bỏ chữ 'h' nếu có (vd: 8h-10h -> 8-10)
+            // Biểu thức chính quy (Regex) tìm mẫu: "T2 đến CN" + "bất kỳ chữ gì" + "số - số"
+            let regex = /(t2|t3|t4|t5|t6|t7|cn).*?(\d{1,2})\s*-\s*(\d{1,2})/g;
+            let match;
+            let results = [];
+            
+            while ((match = regex.exec(text)) !== null) {
+                let day = match[1].toUpperCase();
+                let start = parseInt(match[2]);
+                let end = parseInt(match[3]);
+                if(start < end && start >= START_HOUR && end <= END_HOUR) {
+                    results.push({ day, start, end });
+                }
+            }
+            return results;
         }
 
         function updateFreeTimeSummary() {
@@ -258,68 +180,117 @@
                 return;
             }
 
-            // Tạo biến lưu trữ xem ca nào có ai bận
-            const scheduleData = {};
-            allTimeSlots.forEach(slot => scheduleData[slot] = []);
+            // 1. Khởi tạo ma trận lịch trình (Mỗi giờ chứa 1 danh sách những người bận)
+            let schedule = {};
+            daysOfWeek.forEach(day => {
+                schedule[day] = {};
+                for (let h = START_HOUR; h < END_HOUR; h++) {
+                    schedule[day][h] = []; 
+                }
+            });
 
-            // Quét dữ liệu bận của từng người
+            // 2. Điền thông tin người bận vào ma trận
             activeMembers.forEach(member => {
-                const normalizedBusyText = removeAccents(member.busy);
-                allTimeSlots.forEach(slot => {
-                    const normalizedSlot = removeAccents(slot);
-                    // Nếu văn bản bận của người đó có chứa tên ca tập (ví dụ "sang t2")
-                    if (normalizedBusyText.includes(normalizedSlot)) {
-                        scheduleData[slot].push(member.name.trim());
+                let busySlots = parseBusyString(member.busy);
+                let memberName = member.name.trim();
+                
+                busySlots.forEach(slot => {
+                    for (let h = slot.start; h < slot.end; h++) {
+                        if (schedule[slot.day] && schedule[slot.day][h]) {
+                            schedule[slot.day][h].push(memberName);
+                        }
                     }
                 });
             });
 
-            // Phân loại kết quả
-            let perfectHTML = ""; // Nhóm rảnh 100%
-            let warningHTML = ""; // Nhóm vắng 1-3 người
+            // 3. Thuật toán gộp giờ liên tiếp
+            let groupedResults = [];
+            
+            daysOfWeek.forEach(day => {
+                let currentGroupStart = null;
+                let currentMissingStr = null;
 
-            allTimeSlots.forEach(slot => {
-                const missingPeople = scheduleData[slot];
-                
-                if (missingPeople.length === 0) {
-                    perfectHTML += `<div class="time-badge">${slot}</div>`;
-                } else if (missingPeople.length > 0 && missingPeople.length <= 3) {
-                    warningHTML += `
-                        <div class="time-badge">
-                            ${slot} 
-                            <div class="missing-list">(Vắng: ${missingPeople.join(', ')})</div>
-                        </div>`;
+                for (let h = START_HOUR; h <= END_HOUR; h++) {
+                    // Nếu là giờ cuối cùng thì ép vòng lặp đóng nhóm lại
+                    let missingList = (h < END_HOUR) ? schedule[day][h] : ["FORCE_CLOSE"];
+                    let missingStr = missingList.sort().join(','); // Tạo chuỗi chuẩn để so sánh (VD: "Nam,Hải")
+
+                    // Nếu danh sách người vắng thay đổi so với giờ trước -> Đóng nhóm cũ, mở nhóm mới
+                    if (currentMissingStr !== missingStr) {
+                        if (currentGroupStart !== null) {
+                            let missingArr = currentMissingStr ? currentMissingStr.split(',') : [];
+                            // Chỉ lưu những khoảng thời gian kéo dài ít nhất 1 tiếng
+                            if (h - currentGroupStart >= 1) {
+                                groupedResults.push({
+                                    day: day,
+                                    start: currentGroupStart,
+                                    end: h,
+                                    missing: missingArr,
+                                    missingCount: missingArr.length
+                                });
+                            }
+                        }
+                        currentGroupStart = h;
+                        currentMissingStr = missingStr;
+                    }
                 }
             });
 
-            // Xuất ra màn hình
+            // 4. Phân loại và tạo HTML hiển thị
+            let perfectHTML = ""; // Nhóm rảnh 100%
+            let warningHTML = ""; // Nhóm vắng 1-3 người
+
+            daysOfWeek.forEach(day => {
+                // Lọc kết quả theo từng ngày
+                let perfectToday = groupedResults.filter(r => r.day === day && r.missingCount === 0);
+                let warningToday = groupedResults.filter(r => r.day === day && r.missingCount > 0 && r.missingCount <= 3);
+
+                if (perfectToday.length > 0) {
+                    perfectHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
+                    perfectToday.forEach(r => {
+                        perfectHTML += `<div class="time-badge">${r.start}h - ${r.end}h</div>`;
+                    });
+                    perfectHTML += `</div>`;
+                }
+
+                if (warningToday.length > 0) {
+                    warningHTML += `<div class="day-group"><div class="day-title">${day}</div>`;
+                    warningToday.forEach(r => {
+                        warningHTML += `
+                            <div class="time-badge">
+                                ${r.start}h - ${r.end}h
+                                <span class="missing-list">(Vắng: ${r.missing.join(', ')})</span>
+                            </div>`;
+                    });
+                    warningHTML += `</div>`;
+                }
+            });
+
+            // 5. Xuất ra màn hình
             let finalOutput = "";
 
             if (perfectHTML !== "") {
                 finalOutput += `
                     <div class="result-box perfect">
                         <h3>🌟 Giờ Vàng (Cả nhóm 100% rảnh)</h3>
-                        <p>Tuyệt vời! Hãy chọn những ca này để tập full đội hình:</p>
-                        <div>${perfectHTML}</div>
-                    </div>
-                `;
+                        <p>Các khung giờ hoàn hảo nhất trong tuần:</p>
+                        ${perfectHTML}
+                    </div>`;
             } else {
                 finalOutput += `
                     <div class="result-box perfect" style="border-color: #b2bec3;">
-                        <h3 style="color: #636e72;">🌟 Giờ Vàng (Cả nhóm 100% rảnh)</h3>
-                        <p>Hiện tại chưa tìm thấy khung giờ nào tất cả mọi người đều rảnh.</p>
-                    </div>
-                `;
+                        <h3 style="color: #636e72;">🌟 Giờ Vàng</h3>
+                        <p>Hiện chưa tìm thấy khung giờ nào trên 1 tiếng mà tất cả mọi người đều rảnh.</p>
+                    </div>`;
             }
 
             if (warningHTML !== "") {
                 finalOutput += `
                     <div class="result-box warning">
-                        <h3>⚠️ Giờ Tập Tạm Ổn (Vắng từ 1-3 người)</h3>
-                        <p>Nếu không có Giờ Vàng, có thể cân nhắc các ca sau (máy tính đã note rõ ai vắng mặt):</p>
-                        <div>${warningHTML}</div>
-                    </div>
-                `;
+                        <h3>⚠️ Giờ Tập Tạm Ổn (Vắng 1-3 người)</h3>
+                        <p>Các khung giờ có thể tranh thủ (đã ghi chú người vắng mặt):</p>
+                        ${warningHTML}
+                    </div>`;
             }
 
             freeSummaryContent.innerHTML = finalOutput;
